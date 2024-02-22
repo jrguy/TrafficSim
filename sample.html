@@ -1,0 +1,152 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="https://pixijs.download/release/pixi.min.js"></script>
+    <script src="car.js"></script>
+    <script src="road.js"></script>
+    <script src="inter.js"></script>
+  </head>
+  <body>
+    <script>
+        // Create the application helper and add its render target to the page
+        const WIDTH = 640; 
+        const HEIGHT = 380;
+        const HOR_ROAD = 2; 
+        const VER_ROAD = 2;
+        const CARS = 1;
+        const app = new PIXI.Application({ background: '#87CEFA', width: WIDTH, height: HEIGHT });
+
+        document.body.appendChild(app.view);
+
+        const graphics = new PIXI.Graphics();
+
+        let roadPs = [];
+        let roads = [];
+        let running = true; 
+
+        let hor_r = HEIGHT/(HOR_ROAD + 2);
+        let ver_r = WIDTH/(VER_ROAD + 2);
+        let offset = 0; 
+
+        for (let i = 0; i < ((HOR_ROAD + VER_ROAD)*2); i = i + 2) {
+            if( i <= HOR_ROAD){
+                let ran = Math.floor(Math.random() * ((HEIGHT/HOR_ROAD) - 50)) + (50 * i);
+                ran = hor_r * (i + 1);
+                roadPs[i] = new road_point(0, ran);
+                roadPs[i+1] = new road_point(WIDTH, ran);
+                roads.push( new Road(roadPs[i], roadPs[i+1], true, 1));
+            } else {
+                let ran = Math.floor(Math.random() * ((WIDTH/VER_ROAD) - 50)) + (50 * i); 
+                ran = ver_r + (offset * ver_r);
+                roadPs[i] = new road_point(ran, 0);
+                roadPs[i+1] = new road_point(ran, HEIGHT);
+                roads.push( new Road(roadPs[i], roadPs[i+1], false, 1));
+                offset++;
+            }
+            
+        }
+
+        let inters = [];
+        for (let i = 0; i < roads.length; i++) {
+            for (let l = i + 1; l < roads.length; l++) {
+                let val = FindIntersection( roads[i], roads[l]);
+                if( val[0] != 10 && val[1] != 10){
+                    let temp = new Intersection(val[0], val[1])
+                    inters.push(temp);
+                    roads[i].accept_inter(temp);
+                    roads[l].accept_inter(temp);
+                    temp.accept_road( roads[i] );
+                    temp.accept_road( roads[l] );
+                }
+            }
+        }
+
+        roads.forEach(road => {
+            road.draw(graphics);
+        })
+
+        inters.forEach(inter => {
+            inter.draw_background(graphics);
+        })
+
+        app.stage.addChild(graphics);
+
+        const thing = new PIXI.Graphics();
+
+        app.stage.addChild(thing);
+        thing.x = 0;
+        thing.y = 0;
+
+        let cars = [];
+        for (let i = 0; i < CARS; i++) {
+            let car = new Car( 20 + (20*i), 20 + (20*i), 8 );
+            cars[i] = car; 
+        }
+
+        let startPs = [];
+        for (let i = 0; i < roads.length; i++) {
+            startPs = startPs.concat( roads[i].get_start_p());
+        }
+        
+        for (let i = 0; i < cars.length; i++) {
+            let ran = Math.floor(Math.random() * startPs.length);
+            for (let l = 0; l < roads.length; l++) {
+                if(roads[l].has_start_p(startPs[ran])){
+                    roads[l].accept_car_lane(cars[i], startPs[ran]);
+
+                    let end_i = 0;
+                    if( l < roads.length - 1 ){
+                        end_i = l + 1;
+                    } 
+
+                    let endPs = roads[end_i].get_end_p();
+
+                    endPs.push(roads[l].get_given_end(startPs[ran]));
+
+                    let ran_2 = Math.floor(Math.random() * endPs.length);
+                    cars[i].set_end(endPs[ran_2]);
+                }
+                
+            }
+        }
+
+        roads.forEach(road => {
+            road.check_cars_end();
+        });
+
+        // Enable interactivity!
+        app.stage.eventMode = 'static';
+        app.stage.hitArea = app.screen;
+        app.stage.addEventListener('click', (e) =>
+        {
+            running = !running; 
+            cars.forEach(car => {
+                car.report();
+            });
+            roads.forEach(road => {
+                road.status();
+            });
+        });
+
+        let elapsed = 0.0;
+        app.ticker.add((delta) =>
+        {
+            elapsed += delta;
+
+            if( running){
+                thing.clear();
+                inters.forEach(inter => {
+                    inter.update_time(delta);
+                    inter.draw( thing );
+                });
+            }
+            roads.forEach(road => {
+                road.draw_cars( thing, running );
+            });
+
+
+        });
+      
+    </script>
+  </body>
+</html>
