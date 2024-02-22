@@ -50,6 +50,15 @@ class Car{
         this.at_end();
     }
 
+    in_end(){
+        let val = false; 
+        if( this.endP.x - 5 <= this.x && this.x <= this.endP.x + 5 
+            && this.endP.y - 5  <= this.y && this.y <= this.endP.y + 5  ) {
+           val = true;
+       }
+       return val; 
+    }
+
     report(){
         console.log(this.trips_fin);
         var total = 0; 

@@ -13,7 +13,7 @@
         const HEIGHT = 380;
         const HOR_ROAD = 2; 
         const VER_ROAD = 2;
-        const CARS = 1;
+        const CARS = 3;
         const app = new PIXI.Application({ background: '#87CEFA', width: WIDTH, height: HEIGHT });
 
         document.body.appendChild(app.view);
@@ -120,12 +120,12 @@
         app.stage.addEventListener('click', (e) =>
         {
             running = !running; 
-            cars.forEach(car => {
-                car.report();
-            });
-            roads.forEach(road => {
-                road.status();
-            });
+            // cars.forEach(car => {
+            //     car.report();
+            // });
+            // roads.forEach(road => {
+            //     road.status();
+            // });
         });
 
         let elapsed = 0.0;

@@ -85,10 +85,14 @@ class Intersection{
         return best_opt;
     }
 
-    switch_car_lane(car){
+    switch_car_lane_goal(car){
+        console.log(" switch lanes in intersections over roads ");
         this.roads.forEach(road => {
+            console.log(" going over roads ");
             road.lanes.forEach(lane => {
+                console.log("looking for lane switch");
                 if(lane.endP == car.endP){
+                    console.log(" found lane to switch ");
                     lane.add_car( car );
                     lane.update_car_pos( car );
                     car.get_lane( lane );
@@ -100,6 +104,7 @@ class Intersection{
     }
 
     switch_car_lane(car, lane_v){
+        console.log(" in other lane switch ");
         let cur_lane = 0; 
         this.roads.forEach(road => {
             road.lanes.forEach(lane => {

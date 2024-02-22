@@ -132,96 +132,77 @@ class Road{
         let x = car.x + val[0]; 
         let y = car.y + val[1];
 
-        if( x > 640 || y > 360 || x < 0 || y < 0   ){
+        if(car.in_end()){
+            this.reset_a.push([i,0]);
+            move = false;
+        } else if( x > 640 || y > 360 || x < 0 || y < 0   ){
             //console.log(x + " and y " + y);
             if( !(car.startP.x-5 <= car.x && car.x <= car.startP.x + 5) && 
                   !(  car.startP.y - 5 <= car.y && car.y <= car.startP.y + 5 ) ){
                 this.reset_a.push([i,0]);
+                move = false;
             }
         } 
 
-        //check lane size
-        x = x + (val[0] * 25)
-        y = y + (val[1] * 25)
-        // if( val[0] > 0 || val[1] > 0 ){
-        //     x = x + 25; 
-        //     y = y + 25; 
-        // } else {
-        //     x = x - 25; 
-        //     y = y - 25; 
-        // }
+        if(move){
+            //check lane size
+            x = x + (val[0] * 25)
+            y = y + (val[1] * 25)
 
-        for (let l = 0; l < this.intersections.length; l++) {
-            //update to match boths as it being true twice 
-            if(this.intersections[l].check_in_bounds(x, y)){
-                checkInter = true;
-                //console.log("in intersection cant move ");
-            }
-
-            // if(this.horizontal){
-            //     if(x >= this.intersections[l].check_bounds(val[2]) 
-            //     &&  x <= this.intersections[l].check_bounds(val[3])){
-            //         checkInter = true;
-            //     }
-            // } else {
-            //     if(y >= this.intersections[l].check_bounds(val[2]) 
-            //     && y <= this.intersections[l].check_bounds(val[3])  ){
-            //         checkInter = true;
-            //     }
-            // }
-            if(checkInter){
-                if( val[0] > 0 || val[1] > 0){
-                    if( !this.intersections[l].check_lanes(val[2]) ){
-                        move = false; 
-                    }
-                } else {
-                    if( !this.intersections[l].check_lanes(val[3]) ){
-                        move = false; 
-                    }
+            for (let l = 0; l < this.intersections.length; l++) {
+                //update to match boths as it being true twice 
+                if(this.intersections[l].check_in_bounds(x, y)){
+                    checkInter = true;
                 }
-                //check if intersection roads has end point 
-                if( move && car.need_change){
-                    console.log(" in move and need change ");
-                    console.log(" at intersection " + l );
 
-                    if( this.intersections[l].check_ends(car.endP, car, x, y) ){
-                        //console.log(" inter has end point ");
-                        //console.log(" end point is next ");
-                        //console.log(car.endP);
-
-                        this.update_a.push([i,l]);
+                if(checkInter){
+                    if( val[0] > 0 || val[1] > 0){
+                        if( !this.intersections[l].check_lanes(val[2]) ){
+                            move = false; 
+                        }
                     } else {
-                        console.log(" doing best change");
-                        let best_c = this.intersections[l].check_car_lane( car, x, y);
-                        this.change_a.push([i, l, best_c]);
+                        if( !this.intersections[l].check_lanes(val[3]) ){
+                            move = false; 
+                        }
+                    }
+                    //check if intersection roads has end point 
+                    if( move && car.need_change){
+                        console.log(" in move and need change ");
+                        console.log(" at intersection " + l );
+
+                        if( this.intersections[l].check_ends(car.endP, car, x, y) ){
+                            this.update_a.push([i,l]);
+                        } else {
+                            console.log(" doing best change");
+                            let best_c = this.intersections[l].check_car_lane( car, x, y);
+                            this.change_a.push([i, l, best_c]);
+                        }
                     }
                 }
+                checkInter = false;
             }
-            checkInter = false;
+
+            car.present_lane.cars.forEach(lane_car => {
+                let offset = lane_car.radius/2;
+                if( car.name != lane_car.name ){
+                    if( car.x == lane_car.x ){
+                        if( (lane_car.y - offset) <= y && y <= (lane_car.y + offset) ) {
+                            //console.log(" stoping due to car ");
+                            move = false; 
+                            car.update_blocked(true);
+                        }
+                    } else if( car.y == lane_car.y ){
+                        if( (lane_car.x - offset) <= x && x <= (lane_car.x + offset) ) {
+                            //console.log(" stoping due to car ");
+                            move = false; 
+                            car.update_blocked(true);
+                        }
+                    }
+                }
+            });
         }
 
-        car.present_lane.cars.forEach(lane_car => {
-            let offset = lane_car.radius/2;
-            if( car.name != lane_car.name ){
-                if( car.x == lane_car.x ){
-                    if( (lane_car.y - offset) <= y && y <= (lane_car.y + offset) ) {
-                        //console.log(" stoping due to car ");
-                        move = false; 
-                        car.update_blocked(true);
-                    }
-                } else if( car.y == lane_car.y ){
-                    if( (lane_car.x - offset) <= x && x <= (lane_car.x + offset) ) {
-                        //console.log(" stoping due to car ");
-                        move = false; 
-                        car.update_blocked(true);
-                    }
-                }
-            }
-        });
-
-        //console.log(" can move? " + move);
         if(move){
-            //console.log(" can move ");
             car.update_dir(val[0], val[1], this.max_speed);
         }
     }
@@ -274,21 +255,32 @@ class Road{
                     i++;
                 });
             });
-
+            let car_r = [];
             if(this.update_a.length > 0){
-                console.log("       leng update_a " + this.update_a.length);
+                // console.log("       leng update_a " + this.update_a.length);
                 for (let i = 0; i < this.update_a.length; i++) {
                     //remove car from lane
+                    // console.log(" doing update with array ");
+                    console.log(this.update_a[i]);
                     this.cars[this.update_a[i][0]].present_lane.remove_car(this.cars[this.update_a[i][0]]);
+                    // console.log(" done removing car from lane ");
                     //move car to lane 
-                    this.intersections[this.update_a[i][1]].switch_car_lane(this.cars[this.update_a[i][0]]);
-                    this.remove_car( this.cars[this.update_a[i][0]] );
+                    // console.log(" intersection array ");
+                    console.log(this.intersections);
+                    this.intersections[this.update_a[i][1]].switch_car_lane_goal(this.cars[this.update_a[i][0]]);
+                    // console.log(" done changin car in lane ");
+                    car_r.push(this.cars[this.update_a[i][0]]);
                 }
+
+                // for (let i = 0; i < this.update_a.length; i++) {
+                //     this.remove_car( this.cars[this.update_a[i][0]] );
+                // }
+
                 this.update_a.length = 0;
             }
 
             if(this.change_a.length > 0){
-                console.log("       leng change_a " + this.change_a.length);
+                // console.log("       leng change_a " + this.change_a.length);
                 //console.log(" roads car bleow ");
                 //console.log(this.cars)
                 for (let i = 0; i < this.change_a.length; i++) {
@@ -302,7 +294,8 @@ class Road{
                     this.intersections[this.change_a[i][1]].switch_car_lane(this.cars[this.change_a[i][0]], 
                         this.change_a[i][2]);
 
-                    this.remove_car( this.cars[this.change_a[i][0]] );
+                    //this.remove_car( this.cars[this.change_a[i][0]] );
+                    car_r.push(this.cars[this.change_a[i][0]]);
                 }
 
                 this.change_a.length = 0;
@@ -310,8 +303,10 @@ class Road{
 
             if(this.reset_a.length > 0){
                 console.log("       leng reset_a " + this.reset_a.length);
+                
                 for (let i = 0; i < this.reset_a.length; i++) {
                     //console.log(this.cars);
+                    console.log(this.reset_a[i]);
                     if( this.cars[this.reset_a[i][0]].present_lane != this.cars[this.reset_a[i][0]].startLane){
                         //remove and put car back in starting lane 
                         this.cars[this.reset_a[i][0]].present_lane.remove_car(this.cars[this.reset_a[i][0]]);
@@ -322,13 +317,22 @@ class Road{
 
                         
                         this.cars[this.reset_a[i][0]].startRoad.accept_car( this.cars[this.reset_a[i][0]], true );
-                        this.remove_car( this.cars[this.reset_a[i][0]] );
+                        this.cars[this.reset_a[i][0]].at_end();
 
+                        //this.remove_car( this.cars[this.reset_a[i][0]] );
+                        car_r.push(this.cars[this.reset_a[i][0]]);
                     } else {
                         this.set_pos(this.cars[this.reset_a[i][0]]);
                     }
                 }
                 this.reset_a.length = 0;
+            }
+
+            if(car_r.length){
+                car_r.forEach(car => {
+                    this.remove_car( car );
+                });
+                car_r.length = 0;
             }
         }
     }
