@@ -34,14 +34,11 @@ class Intersection{
     }
 
     check_in_bounds(x, y){
-        //console.log("x " + x + " y " + y);
-        //console.log(this.bounds);
         let val = false;
         if( this.bounds[0] <= x && x <= this.bounds[1]
              && this.bounds[2] <= y && y <= this.bounds[3] ) {
             val = true;
         }
-        //console.log("val " + val);
         return val; 
     }
 
@@ -69,15 +66,6 @@ class Intersection{
             road.lanes.forEach(lane => {
                 let val = lane.get_dir();
                 optVal.push( new road_point(x+val[0], y+val[1]));
-                // if( car.present_road != road){
-                //     //different roads 
-                //     let val = lane.get_dir();
-                //     optVal.push( new road_point(x+val[0], y+val[1]));
-                // } else {
-                //     //current road 
-
-                // }
-                // i++;
             });
         });
         let best_opt = car.check_dir( optVal );
@@ -117,12 +105,6 @@ class Intersection{
                 }
                 cur_lane++;
             })
-
-            // road.lanes[lane].add_car( car );
-            // road.lanes[lane].update_car_pos( car );
-            // car.get_lane( road.lanes[lane] );
-            // car.get_road( road );
-            // road.accept_car( car, false );
         });
     }
 

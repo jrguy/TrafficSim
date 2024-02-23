@@ -1,4 +1,5 @@
 class Road{
+    name = 'ROAD ' + Math.floor(Math.random() * 100) + 1;
     start_x = 0;
     start_y = 0; 
     end_x = 0; 
@@ -57,6 +58,14 @@ class Road{
         }
     }
 
+    print_car_array(car){
+        let i = this.cars.indexOf(car);
+        // if( i > -1){
+        //     console.log(" CHECK in road remove car " + this.cars[i].name);;
+        // }
+        return i;
+    }
+
     accept_car_lane(car, start_p){
         this.lanes.forEach(lane => {
             if(lane.startP.x == start_p.x && lane.startP.y == start_p.y){
@@ -65,7 +74,7 @@ class Road{
                 car.get_lane(lane);
                 car.get_road( this );
                 //change end point use road intersection to find other roads 
-                car.set_points(lane.startP, lane.endP );
+                car.set_points(lane.startP.x, lane.startP.y, lane.endP.x, lane.endP.y );
             }
         });
     }
@@ -91,7 +100,7 @@ class Road{
         } else {
             return [0,1];
         }
-    }
+    } 
 
     get_start_p(){
         let lane_s = [];
@@ -122,6 +131,13 @@ class Road{
     set_pos(car){
         car.reset()
     }
+
+    get_distance(x1, y1, x2, y2){
+        let a = x1 - x2; 
+        let b = y1 - y2;
+
+        return Math.abs(Math.sqrt( a*a + b*b));
+    }
     
     check_car(i, val, car){
 
@@ -133,14 +149,12 @@ class Road{
         let y = car.y + val[1];
 
         if(car.in_end()){
-            this.reset_a.push([i,0]);
+            this.reset_a.push([this.print_car_array(car),0]);
             move = false;
         } else if( x > 640 || y > 360 || x < 0 || y < 0   ){
-            //console.log(x + " and y " + y);
-            if( !(car.startP.x-5 <= car.x && car.x <= car.startP.x + 5) && 
-                  !(  car.startP.y - 5 <= car.y && car.y <= car.startP.y + 5 ) ){
-                this.reset_a.push([i,0]);
-                move = false;
+            if(this.get_distance(x, y, car.startP.x, car.startP.y) > 25){
+                this.reset_a.push([this.print_car_array(car),0]);
+                move = false;   
             }
         } 
 
@@ -280,7 +294,7 @@ class Road{
             }
 
             if(this.change_a.length > 0){
-                // console.log("       leng change_a " + this.change_a.length);
+                 console.log("       leng change_a " + this.change_a.length);
                 //console.log(" roads car bleow ");
                 //console.log(this.cars)
                 for (let i = 0; i < this.change_a.length; i++) {
@@ -302,10 +316,8 @@ class Road{
             }
 
             if(this.reset_a.length > 0){
-                console.log("       leng reset_a " + this.reset_a.length);
                 
                 for (let i = 0; i < this.reset_a.length; i++) {
-                    //console.log(this.cars);
                     console.log(this.reset_a[i]);
                     if( this.cars[this.reset_a[i][0]].present_lane != this.cars[this.reset_a[i][0]].startLane){
                         //remove and put car back in starting lane 
@@ -319,7 +331,6 @@ class Road{
                         this.cars[this.reset_a[i][0]].startRoad.accept_car( this.cars[this.reset_a[i][0]], true );
                         this.cars[this.reset_a[i][0]].at_end();
 
-                        //this.remove_car( this.cars[this.reset_a[i][0]] );
                         car_r.push(this.cars[this.reset_a[i][0]]);
                     } else {
                         this.set_pos(this.cars[this.reset_a[i][0]]);
@@ -334,6 +345,7 @@ class Road{
                 });
                 car_r.length = 0;
             }
+
         }
     }
 

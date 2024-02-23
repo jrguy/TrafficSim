@@ -27,15 +27,15 @@ class Car{
         this.speed = Math.floor(Math.random() * 3) + 1;
     }
 
-    set_points(start, end ){
-        this.startP = start; 
-        this.endP = end; 
-        this.x = start.x; 
-        this.y = start.y; 
+    set_points(s1x, s1y, e1x, e1y ){
+        this.startP = new road_point(s1x, s1y); 
+        this.endP = new road_point(e1x, e1y);  
+        this.x = s1x; 
+        this.y = s1y; 
     }
 
-    set_end(end){
-        this.endP = end;
+    set_end(endx, endy){
+        this.endP = new road_point(endx, endy); 
     }
 
     at_end(){
@@ -97,18 +97,14 @@ class Car{
         let max_dist = Math.pow(10, 1000);
         let choseI = -1;
         let i = 0;  
-        // console.log(" point list ot check below ");
-        // console.log(pointList);
         pointList.forEach(rPoint => {
             let found_dist = this.find_dis(this.endP, rPoint);
-            // console.log(found_dist);
             if(found_dist < max_dist){
                 max_dist = found_dist;
                 choseI = i;
             }
             i++;
         });
-        //console.log(choseI);
         return choseI;
     }
 
