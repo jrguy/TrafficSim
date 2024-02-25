@@ -64,15 +64,27 @@ class Intersection{
 
     check_car_lane( car, x, y){
         let optVal = [];
+        let secondOptVal = [];
+        let devalueLane = [];
         this.roads.forEach(road => {
             road.lanes.forEach(lane => {
                 let val = lane.get_dir();
                 optVal.push( new road_point(x+val[0], y+val[1]));
+                secondOptVal.push( new road_point(x+(val[0]*10), y+(val[1]*10)));
+                if(car.present_road == road){
+                    if( car.present_lane == lane ){
+                        devalueLane.push([optVal.length-1, 2]);
+                    } else {
+                        devalueLane.push([optVal.length-1, 20]);
+                    }
+                }
             });
         });
-        let best_opt = car.check_dir( optVal );
 
-        return best_opt;
+        let best_opt = car.check_dir( optVal );
+        let second = car.check_dir_deval( secondOptVal, devalueLane);
+
+        return second;
     }
 
     switch_car_lane_goal(car){

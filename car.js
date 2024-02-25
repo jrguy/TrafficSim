@@ -109,6 +109,26 @@ class Car{
         return choseI;
     }
 
+    check_dir_deval(pointList, alter){
+        let max_dist = Math.pow(10, 1000);
+        let choseI = -1;
+        let i = 0;  
+        pointList.forEach(rPoint => {
+            let found_dist = this.find_dis(this.endP, rPoint);
+            alter.forEach(vals => {
+                if(vals[0] == i){
+                    found_dist = found_dist + vals[1];
+                }
+            });
+            if(found_dist < max_dist){
+                max_dist = found_dist;
+                choseI = i;
+            }
+            i++;
+        });
+        return choseI;
+    }
+
     find_dis(p1, p2){
         let a = p1.x - p2.x; 
         let b = p1.y - p2.y;
