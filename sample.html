@@ -13,8 +13,8 @@
         const HEIGHT = 380;
         const HOR_ROAD = 2; 
         const VER_ROAD = 2;
-        const CARS = 4;
-        const MAX_CARS = 9;
+        const CARS = 1;
+        const MAX_CARS = 1;
         const app = new PIXI.Application({ background: '#87CEFA', width: WIDTH, height: HEIGHT });
 
         document.body.appendChild(app.view);
@@ -137,7 +137,8 @@
             let car = new Car( 20, 20, 8 );
             cars.push(car);
 
-            let ran = Math.floor(Math.random() * startPs.length);
+            let ran = checkStartP();
+            //let ran = Math.floor(Math.random() * startPs.length);
             for (let l = 0; l < roads.length; l++) {
                 if(roads[l].has_start_p(startPs[ran])){
                     roads[l].accept_car_lane(car, startPs[ran]);
@@ -156,8 +157,26 @@
                 }
                 
             }
+        }
 
-
+        function checkStartP(){
+            let found = false;
+            let ran = Math.floor(Math.random() * startPs.length);
+            while(!found){
+                for (let l = 0; l < roads.length; l++) {
+                    if(roads[l].has_start_p(startPs[ran])){
+                        if(!roads[l].check_lane_start(startPs[ran])){
+                            found = true;
+                        } 
+                    }
+                }
+                if( ran < startPs.length - 1){
+                    ran++;
+                } else {
+                    ran = 0;
+                }
+            }
+            return ran; 
         }
       
     </script>

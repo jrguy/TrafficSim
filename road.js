@@ -60,9 +60,6 @@ class Road{
 
     print_car_array(car){
         let i = this.cars.indexOf(car);
-        // if( i > -1){
-        //     console.log(" CHECK in road remove car " + this.cars[i].name);;
-        // }
         return i;
     }
 
@@ -128,6 +125,18 @@ class Road{
         return present;
     }
 
+    check_lane_start(start_p){
+        let occ = false;
+        this.lanes.forEach(lane => {
+            if(lane.startP.x == start_p.x && lane.startP.y == start_p.y){
+                if(lane.car_in_start()){
+                    occ = true; 
+                }
+            }
+        });
+        return occ; 
+    }
+
     set_pos(car){
         car.reset()
     }
@@ -145,8 +154,9 @@ class Road{
         let move = true; 
         let checkInter = false;
 
-        let x = car.x + val[0]; 
-        let y = car.y + val[1];
+        let moveXY = car.get_speed(val[0], val[1], this.max_speed);
+        let x = moveXY[0]; 
+        let y = moveXY[1];
 
         if(car.in_end()){
             this.reset_a.push([this.print_car_array(car),0]);
@@ -181,35 +191,53 @@ class Road{
                     }
                     //check if intersection roads has end point 
                     if( move && car.need_change){
-                        console.log(" in move and need change ");
-                        console.log(" at intersection " + l );
 
                         if( this.intersections[l].check_ends(car.endP, car, x, y) ){
-                            this.update_a.push([i,l]);
+                            this.update_a.push([this.print_car_array(car),l]);
                         } else {
-                            console.log(" doing best change");
                             let best_c = this.intersections[l].check_car_lane( car, x, y);
-                            this.change_a.push([i, l, best_c]);
+                            this.change_a.push([this.print_car_array(car), l, best_c]);
                         }
                     }
                 }
                 checkInter = false;
             }
 
+            let testX = car.x + val[0];
+            let testY = car.y + val[1]
             car.present_lane.cars.forEach(lane_car => {
-                let offset = lane_car.radius/2;
                 if( car.name != lane_car.name ){
                     if( car.x == lane_car.x ){
-                        if( (lane_car.y - offset) <= y && y <= (lane_car.y + offset) ) {
-                            //console.log(" stoping due to car ");
-                            move = false; 
-                            car.update_blocked(true);
+                        if( val[1] > 0 ){
+                            for( let i = testY; i <= y; i++){
+                                if(i == lane_car.y){
+                                    move = false; 
+                                    car.update_blocked(true);
+                                }
+                            }
+                        } else {
+                            for( let i = testY; i >= y; i--){
+                                if(i == lane_car.y){
+                                    move = false; 
+                                    car.update_blocked(true);
+                                }
+                            }
                         }
                     } else if( car.y == lane_car.y ){
-                        if( (lane_car.x - offset) <= x && x <= (lane_car.x + offset) ) {
-                            //console.log(" stoping due to car ");
-                            move = false; 
-                            car.update_blocked(true);
+                        if( val[0] > 0 ){
+                            for( let i = testX; i <= x; i++){
+                                if( i == lane_car.x){
+                                    move = false; 
+                                    car.update_blocked(true);
+                                }
+                            }
+                        } else {
+                            for( let i = testX; i >= x; i--){
+                                if( i == lane_car.x){
+                                    move = false; 
+                                    car.update_blocked(true);
+                                }
+                            }
                         }
                     }
                 }
@@ -238,7 +266,6 @@ class Road{
     }
 
     draw( graphics ){
-        //console.log(this.lanes.length + " lanes");
         graphics.lineStyle(1, '#000000');
 
         let startOffX = this.start_x - (this.x_offset  * (this.lanes.length/2));
@@ -261,6 +288,11 @@ class Road{
         if( running ){
             let i = 0;
             this.lanes.forEach(lane => {
+                if( lane.startP.cars.length > 0 ){
+                    if(!lane.car_in_start()){
+                        lane.release();
+                    }
+                }
                 lane.cars.forEach(car =>{
                     car.draw(graphics);
                     car.draw_end(graphics);
@@ -271,44 +303,26 @@ class Road{
             });
             let car_r = [];
             if(this.update_a.length > 0){
-                // console.log("       leng update_a " + this.update_a.length);
                 for (let i = 0; i < this.update_a.length; i++) {
                     //remove car from lane
-                    // console.log(" doing update with array ");
-                    console.log(this.update_a[i]);
                     this.cars[this.update_a[i][0]].present_lane.remove_car(this.cars[this.update_a[i][0]]);
-                    // console.log(" done removing car from lane ");
                     //move car to lane 
-                    // console.log(" intersection array ");
-                    console.log(this.intersections);
                     this.intersections[this.update_a[i][1]].switch_car_lane_goal(this.cars[this.update_a[i][0]]);
-                    // console.log(" done changin car in lane ");
                     car_r.push(this.cars[this.update_a[i][0]]);
                 }
-
-                // for (let i = 0; i < this.update_a.length; i++) {
-                //     this.remove_car( this.cars[this.update_a[i][0]] );
-                // }
-
                 this.update_a.length = 0;
             }
 
             if(this.change_a.length > 0){
-                 console.log("       leng change_a " + this.change_a.length);
-                //console.log(" roads car bleow ");
-                //console.log(this.cars)
+                 //console.log("       leng change_a " + this.change_a.length);
                 for (let i = 0; i < this.change_a.length; i++) {
-                    // console.log(this.change_a[i]);
+                    //console.log(this.change_a[i]);
                     // //remove car from lane
-                    // console.log(" car id " + this.change_a[i][0]);
-                    // console.log(" car " + this.cars[this.change_a[i][0]]);
-                    // console.log(" lane " + this.cars[this.change_a[i][0]].present_lane);
                     this.cars[this.change_a[i][0]].present_lane.remove_car(this.cars[this.change_a[i][0]]);
                     //move car to lane 
                     this.intersections[this.change_a[i][1]].switch_car_lane(this.cars[this.change_a[i][0]], 
                         this.change_a[i][2]);
 
-                    //this.remove_car( this.cars[this.change_a[i][0]] );
                     car_r.push(this.cars[this.change_a[i][0]]);
                 }
 
@@ -318,16 +332,15 @@ class Road{
             if(this.reset_a.length > 0){
                 
                 for (let i = 0; i < this.reset_a.length; i++) {
-                    console.log(this.reset_a[i]);
+                    //console.log(this.reset_a[i]);
                     if( this.cars[this.reset_a[i][0]].present_lane != this.cars[this.reset_a[i][0]].startLane){
-                        //remove and put car back in starting lane 
+                        //remove and put car back in starting lane
                         this.cars[this.reset_a[i][0]].present_lane.remove_car(this.cars[this.reset_a[i][0]]);
 
                         this.cars[this.reset_a[i][0]].startLane.add_car( this.cars[this.reset_a[i][0]] );
                         this.cars[this.reset_a[i][0]].startLane.update_car_pos( this.cars[this.reset_a[i][0]] );
                         this.cars[this.reset_a[i][0]].get_lane( this.cars[this.reset_a[i][0]].startLane );
 
-                        
                         this.cars[this.reset_a[i][0]].startRoad.accept_car( this.cars[this.reset_a[i][0]], true );
                         this.cars[this.reset_a[i][0]].at_end();
 
@@ -370,8 +383,7 @@ class lane{
     dir1 = 0;
     dir2 = 0;
     hor = false;
-
-    
+ 
     constructor( start, end, hor){
         this.startP = start;
         this.endP = end; 
@@ -401,7 +413,27 @@ class lane{
     }
 
     add_car( car ){
+        //this.cars.push(car);
+        this.startP.cars.push(car);
+    }
+
+    release(){
+        let car = this.startP.cars.shift();
         this.cars.push(car);
+        let last = this.cars.length - 1;
+        if(this.endP.x != this.cars[last].endP.x || this.endP.y != this.cars[last].endP.y ){
+            this.cars[last].need_change = true; 
+        }
+    }
+
+    reset(car){
+        let i = this.cars.indexOf(car);
+        if( i > -1){
+            this.cars.splice(i, 1);
+        }
+        if(this.startP.cars.indexOf(car) == -1){
+            this.startP.cars.push(car);
+        }
     }
 
     update_car_pos( car ){
@@ -419,15 +451,26 @@ class lane{
         }
     }
 
+    car_in_start(){
+        let cars_present = false; 
+        this.cars.forEach(lane_car => {
+            let offset = lane_car.radius + 5;
+            if( this.startP.x == lane_car.x ){
+                if( (this.startP.y - offset) <= lane_car.y && lane_car.y <= (this.startP.y + offset) ) {
+                    cars_present = true; 
+                }
+            } else if( this.startP.y == lane_car.y ){
+                if( (this.startP.x - offset) <= lane_car.x && lane_car.x <= (this.startP.x + offset) ) {
+                    cars_present = true; 
+                }
+            }
+        });
+        return cars_present;
+    }
+
     car_in_lane( carP, x, y ){
         let inX = false; 
         let inY = false; 
-
-        // console.log(" hor line " + this.hor);
-        // console.log(" car " + carP.x + " y " + carP.y);
-        // console.log(" adjusted " + x + " y " + y);
-        // console.log(" lane start " + this.startP.x + " " + this.startP.y);
-        // console.log(" lane end " + this.endP.x + " " + this.endP.y);
         
         if(this.hor){
             if(this.startP.x < this.endP.x){
@@ -458,7 +501,6 @@ class lane{
                 inX = true;
             }
         }
-        // console.log(" find if in lane " + inX + " " + inY);
 
         return inX && inY;
     }
@@ -479,6 +521,8 @@ class lane{
 class road_point{
     x = 0; 
     y = 0;
+    cars = [];
+
     constructor(given_x, given_y){
         this.x = given_x; 
         this.y = given_y; 

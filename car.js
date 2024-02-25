@@ -45,6 +45,7 @@ class Car{
     }
 
     reset(){
+        this.present_lane.reset(this);
         this.x = this.startP.x; 
         this.y = this.startP.y;
         this.at_end();
@@ -129,6 +130,19 @@ class Car{
         }
     }
 
+    get_speed(given_x, given_y, top_speed){
+        let sX = 0;
+        let sY = 0;
+        if( (given_x * this.speed ) <= top_speed && (given_y * this.speed ) <= top_speed  ) {
+            sX = this.x  + (given_x * this.speed ); 
+            sY = this.y + (given_y * this.speed ); 
+        } else {
+            sX = this.x + (given_x * top_speed ); 
+            sY = this.y + (given_y * top_speed ); 
+        }
+        return [sX, sY];
+    }
+
     get_lane( lane ){
         if( !this.gotFLane){
             this.startLane = lane; 
@@ -161,8 +175,8 @@ class Car{
     status(){
         console.log("       car: " + this.name);
         console.log("       x " + this.x + " y " + this.y);
-        console.log("       start " + this.startP.x + " " + this.startP.y);
-        console.log("       end " + this.endP.x + "  " + this.endP.y);
-        console.log("       car need lane change: " + this.need_change);
+        //console.log("       start " + this.startP.x + " " + this.startP.y);
+        //console.log("       end " + this.endP.x + "  " + this.endP.y);
+        //console.log("       car need lane change: " + this.need_change);
     }
 } 

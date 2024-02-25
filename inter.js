@@ -35,6 +35,8 @@ class Intersection{
 
     check_in_bounds(x, y){
         let val = false;
+        // console.log(" x " + x +" y " + y);
+        // console.log(this.bounds);
         if( this.bounds[0] <= x && x <= this.bounds[1]
              && this.bounds[2] <= y && y <= this.bounds[3] ) {
             val = true;
@@ -74,13 +76,9 @@ class Intersection{
     }
 
     switch_car_lane_goal(car){
-        console.log(" switch lanes in intersections over roads ");
         this.roads.forEach(road => {
-            console.log(" going over roads ");
             road.lanes.forEach(lane => {
-                console.log("looking for lane switch");
                 if(lane.endP == car.endP){
-                    console.log(" found lane to switch ");
                     lane.add_car( car );
                     lane.update_car_pos( car );
                     car.get_lane( lane );
@@ -92,7 +90,6 @@ class Intersection{
     }
 
     switch_car_lane(car, lane_v){
-        console.log(" in other lane switch ");
         let cur_lane = 0; 
         this.roads.forEach(road => {
             road.lanes.forEach(lane => {
@@ -179,7 +176,6 @@ function FindIntersection( line1, line2){
     line2Hor = false; 
     line2Ver = false; 
 
-    //console.log(line2);
     if( line2.start_x == line2.end_x ) {
         line2Hor = true;
     } else if( line2.start_y == line2.start_y){
@@ -189,10 +185,8 @@ function FindIntersection( line1, line2){
     if( (line1Hor && line2Ver) || (line1Ver && line2Hor) ){
         //some lines are vertical 
         if( line1Hor && line2Ver ){
-            //console.log([line2.start_x, line1.start_y]);
             return [line2.start_x, line1.start_y];
         } else {
-            //console.log([line2.start_x, line1.start_y]);
             return [line2.start_x, line1.start_y];
         }
  
