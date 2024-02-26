@@ -11,24 +11,27 @@ class Road{
     intersections = [];
     lanes = [];
     max_speed = 3; 
+    num_lanes = 1;
     update_a = [];
     reset_a = [];
     change_a = [];
 
-    constructor( start_point, end_point, hor, num_lanes){
+    constructor( start_point, end_point, hor, num_lanes, draw_size){
         this.start_x = start_point.x; 
         this.start_y = start_point.y; 
         this.end_x = end_point.x; 
         this.end_y = end_point.y; 
         this.horizontal = hor;
+        this.num_lanes = num_lanes; 
+        
         let lane_off_x = 0; 
         let lane_off_y = 0;
         if(hor){
-            this.y_offset = 20; 
-            lane_off_y = 10; 
+            this.y_offset = draw_size; 
+            lane_off_y = Math.floor(draw_size/2); 
         } else {
-            this.x_offset = 20;
-            lane_off_x = 10; 
+            this.x_offset = draw_size;
+            lane_off_x = Math.floor(draw_size/2); 
         } 
         for (let i = 0; i < num_lanes; i++) {
             let laneOffXA = lane_off_x + (i * this.x_offset);
@@ -161,7 +164,7 @@ class Road{
         if(car.in_end()){
             this.reset_a.push([this.print_car_array(car),0]);
             move = false;
-        } else if( x > 640 || y > 360 || x < 0 || y < 0   ){
+        } else if( x > WIDTH || y > HEIGHT || x < 0 || y < 0   ){
             if(this.get_distance(x, y, car.startP.x, car.startP.y) > 25){
                 this.reset_a.push([this.print_car_array(car),0]);
                 move = false;   
@@ -172,10 +175,18 @@ class Road{
             //check lane size
             x = x + (val[0] * 25)
             y = y + (val[1] * 25)
+            let chX = x;
+            let chY = y;
 
             for (let l = 0; l < this.intersections.length; l++) {
+                chX = x + ( val[0] * ( this.intersections[l].offest  + car.radius));
+                chY = y + ( val[1] * ( this.intersections[l].offest  + car.radius));
+                console.log(" build val x" + ( this.intersections[l].offest * this.intersections[l].road_lanes_x + car.radius) );
+                console.log(" build val y" + ( this.intersections[l].offest * this.intersections[l].road_lanes_y + car.radius) );
+                console.log(" current x " + x + " y " + y);
+                console.log(" change x " + chX +" y " + chY);
                 //update to match boths as it being true twice 
-                if(this.intersections[l].check_in_bounds(x, y)){
+                if(this.intersections[l].check_in_bounds(chX, chY)){
                     checkInter = true;
                 }
 
@@ -213,6 +224,7 @@ class Road{
                                 if(i == lane_car.y){
                                     move = false; 
                                     car.update_blocked(true);
+                                    i = y + 1;
                                 }
                             }
                         } else {
@@ -220,6 +232,7 @@ class Road{
                                 if(i == lane_car.y){
                                     move = false; 
                                     car.update_blocked(true);
+                                    i = y - 1;
                                 }
                             }
                         }
@@ -229,6 +242,7 @@ class Road{
                                 if( i == lane_car.x){
                                     move = false; 
                                     car.update_blocked(true);
+                                    i = x + 1;
                                 }
                             }
                         } else {
@@ -236,6 +250,7 @@ class Road{
                                 if( i == lane_car.x){
                                     move = false; 
                                     car.update_blocked(true);
+                                    i = x - 1;
                                 }
                             }
                         }
@@ -413,7 +428,6 @@ class lane{
     }
 
     add_car( car ){
-        //this.cars.push(car);
         this.startP.cars.push(car);
     }
 

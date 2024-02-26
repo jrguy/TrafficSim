@@ -11,10 +11,12 @@
         // Create the application helper and add its render target to the page
         const WIDTH = 640; 
         const HEIGHT = 380;
-        const HOR_ROAD = 2; 
-        const VER_ROAD = 2;
-        const CARS = 1;
-        const MAX_CARS = 1;
+        const HOR_ROAD = 1; 
+        const VER_ROAD = 1;
+        const CARS = 4;
+        const MAX_CARS = 10;
+        const ROAD_SIZE = 20;
+        const CAR_SIZE = 8;
         const app = new PIXI.Application({ background: '#87CEFA', width: WIDTH, height: HEIGHT });
 
         document.body.appendChild(app.view);
@@ -38,13 +40,13 @@
                 ran = hor_r * (i + 1);
                 roadPs[i] = new road_point(0, ran);
                 roadPs[i+1] = new road_point(WIDTH, ran);
-                roads.push( new Road(roadPs[i], roadPs[i+1], true, 1));
+                roads.push( new Road(roadPs[i], roadPs[i+1], true, 2, ROAD_SIZE));
             } else {
                 let ran = Math.floor(Math.random() * ((WIDTH/VER_ROAD) - 50)) + (50 * i); 
                 ran = ver_r + (offset * ver_r);
                 roadPs[i] = new road_point(ran, 0);
                 roadPs[i+1] = new road_point(ran, HEIGHT);
-                roads.push( new Road(roadPs[i], roadPs[i+1], false, 1));
+                roads.push( new Road(roadPs[i], roadPs[i+1], false, 1, ROAD_SIZE));
                 offset++;
             }
             
@@ -55,7 +57,7 @@
             for (let l = i + 1; l < roads.length; l++) {
                 let val = FindIntersection( roads[i], roads[l]);
                 if( val[0] != 10 && val[1] != 10){
-                    let temp = new Intersection(val[0], val[1])
+                    let temp = new Intersection(val[0], val[1], Math.floor(ROAD_SIZE/2))
                     inters.push(temp);
                     roads[i].accept_inter(temp);
                     roads[l].accept_inter(temp);
@@ -134,7 +136,7 @@
         });
 
         function makeCar(){
-            let car = new Car( 20, 20, 8 );
+            let car = new Car( 20, 20, CAR_SIZE );
             cars.push(car);
 
             let ran = checkStartP();

@@ -11,18 +11,27 @@ class Intersection{
     time = 0;
     switchT = Math.floor(Math.random() * (200 - 180)) + (180); 
     need_draw = false;
+    offest = 0;
+    road_lanes_x = 2; 
+    road_lanes_y = 2; 
 
-    constructor(given_x, given_y){
+    constructor(given_x, given_y, offset){
         this.x = given_x - 4; 
         this.y = given_y - 4;
-        this.bounds[0] = given_x - 10;
-        this.bounds[1] = given_x + 10;
-        this.bounds[2] = given_y - 10;
-        this.bounds[3] = given_y + 10;
+        this.bounds[0] = given_x - offset;
+        this.bounds[1] = given_x + offset;
+        this.bounds[2] = given_y - offset;
+        this.bounds[3] = given_y + offset;
+        this.offest = offset;
     }
 
     accept_road( road){
         this.roads.push(road);
+        if( road.horizontal){
+            this.road_lanes_x = (road.num_lanes * 2);
+        } else {
+            this.road_lanes_y = (road.num_lanes * 2);
+        }
     }
 
     road_go(i){
@@ -35,8 +44,6 @@ class Intersection{
 
     check_in_bounds(x, y){
         let val = false;
-        // console.log(" x " + x +" y " + y);
-        // console.log(this.bounds);
         if( this.bounds[0] <= x && x <= this.bounds[1]
              && this.bounds[2] <= y && y <= this.bounds[3] ) {
             val = true;
@@ -138,38 +145,42 @@ class Intersection{
         } else {
             graphics.beginFill(this.stop);
         }
-        graphics.drawRect(this.x-10, this.y, 6, 6);
+        graphics.drawRect(this.x-(this.offest*(this.road_lanes_y-1)) , this.y, 
+                    (Math.floor(this.offest)), (Math.floor(this.offest)));
         if(this.lanes[1]){
             graphics.beginFill(this.green);
         } else {
             graphics.beginFill(this.stop);
         }
-        graphics.drawRect(this.x+10, this.y, 6, 6);
+        graphics.drawRect(this.x+(this.offest*(this.road_lanes_y-1)), this.y, 
+                    (Math.floor(this.offest)), (Math.floor(this.offest)));
         if(this.lanes[2]){
             graphics.beginFill(this.green);
         } else {
             graphics.beginFill(this.stop);
         }
-        graphics.drawRect(this.x, this.y-10, 6, 6);
+        graphics.drawRect(this.x, this.y-(this.offest*(this.road_lanes_x-1)), 
+                    (Math.floor(this.offest)), (Math.floor(this.offest)));
         if(this.lanes[3]){
             graphics.beginFill(this.green);
         } else {
             graphics.beginFill(this.stop);
         }
-        graphics.drawRect(this.x, this.y+10, 6, 6);
+        graphics.drawRect(this.x, this.y+(this.offest*(this.road_lanes_x-1)),
+                     (Math.floor(this.offest)), (Math.floor(this.offest)));
         graphics.endFill();
         this.need_draw = false; 
     }
 
     draw_background(graphics){
         graphics.beginFill('#87CEFA');
-        graphics.drawRect(this.x-17, this.y-17, 42, 42);
+        graphics.drawRect(this.x-(this.offest*this.road_lanes_y), this.y-(this.offest*this.road_lanes_x), 
+                (this.offest*(this.road_lanes_y*2)) + (this.offest/2), (this.offest*(this.road_lanes_x*2)) + (this.offest/2));
     }
 
     status(){
         console.log("   inter: " + this.name);
         console.log("   x " + this.x + " y " + this.y);
-
     }
 }
 
@@ -179,7 +190,7 @@ function FindIntersection( line1, line2){
     line1Hor = false; 
     line1Ver = false; 
 
-    if( line1.start_x == line1.end_x ) {
+    if( line1.start_x == line1.end_x ) {0
         line1Hor = true;
     } else if( line1.start_y == line1.start_y){
         line1Ver = true; 
