@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="https://pixijs.download/release/pixi.min.js"></script>
+    <script src="mapReader.js"></script>
+  </head>
+  <body>
+    <script>
+        const WIDTH = 640; 
+        const HEIGHT = 380;
+
+        const app = new PIXI.Application({ background: '#87CEFA', width: WIDTH, height: HEIGHT });
+
+        document.body.appendChild(app.view);
+
+
+        let file = "northStreet.osm";
+
+        let reader = new FileReader();
+
+        reader.readAsText(file);
+
+        reader.onload = function() {
+            console.log(reader.result);
+        };
+
+
+
+
+
+
+
+
+        const graphics = new PIXI.Graphics();
+
+        app.stage.addChild(graphics);
+
+        const thing = new PIXI.Graphics();
+
+        app.stage.addChild(thing);
+        thing.x = 0;
+        thing.y = 0;
+
+        app.stage.eventMode = 'static';
+        app.stage.hitArea = app.screen;
+        app.stage.addEventListener('click', (e) =>
+        {
+
+        });
+
+        let elapsed = 0.0;
+        app.ticker.add((delta) =>
+        {
+            elapsed += delta;
+
+
+        });
+
+
+      
+    </script>
+  </body>
+</html>

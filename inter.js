@@ -140,36 +140,31 @@ class Intersection{
     }
 
     draw( graphics ){
-        if(this.lanes[0]){
-            graphics.beginFill(this.green);
-        } else {
-            graphics.beginFill(this.stop);
-        }
+        this.draw_color(this.lanes[0], graphics);
         graphics.drawRect(this.x-(this.offest*(this.road_lanes_y-1)) , this.y, 
                     (Math.floor(this.offest)), (Math.floor(this.offest)));
-        if(this.lanes[1]){
-            graphics.beginFill(this.green);
-        } else {
-            graphics.beginFill(this.stop);
-        }
+
+        this.draw_color(this.lanes[1], graphics);
         graphics.drawRect(this.x+(this.offest*(this.road_lanes_y-1)), this.y, 
                     (Math.floor(this.offest)), (Math.floor(this.offest)));
-        if(this.lanes[2]){
-            graphics.beginFill(this.green);
-        } else {
-            graphics.beginFill(this.stop);
-        }
+
+        this.draw_color(this.lanes[2], graphics);
         graphics.drawRect(this.x, this.y-(this.offest*(this.road_lanes_x-1)), 
                     (Math.floor(this.offest)), (Math.floor(this.offest)));
-        if(this.lanes[3]){
-            graphics.beginFill(this.green);
-        } else {
-            graphics.beginFill(this.stop);
-        }
+
+        this.draw_color(this.lanes[3], graphics);
         graphics.drawRect(this.x, this.y+(this.offest*(this.road_lanes_x-1)),
                      (Math.floor(this.offest)), (Math.floor(this.offest)));
         graphics.endFill();
         this.need_draw = false; 
+    }
+
+    draw_color(light, graphics){
+        if( light){
+            graphics.beginFill(this.green);
+        } else {
+            graphics.beginFill(this.stop);
+        }
     }
 
     draw_background(graphics){
