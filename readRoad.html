@@ -1,6 +1,6 @@
-<!doctype html>
 <html>
   <head>
+    <script src='osmtogeojson.js'></script>
     <script src="https://pixijs.download/release/pixi.min.js"></script>
     <script src="mapReader.js"></script>
   </head>
@@ -8,53 +8,135 @@
     <script>
         const WIDTH = 640; 
         const HEIGHT = 380;
-
-        const app = new PIXI.Application({ background: '#87CEFA', width: WIDTH, height: HEIGHT });
-
-        document.body.appendChild(app.view);
+        //const graphics = new PIXI.Graphics();
 
 
-        let file = "northStreet.osm";
+        let file = "northStreet.xml";
+        //osmtogeojson(osm_data);
 
-        let reader = new FileReader();
-
-        reader.readAsText(file);
-
-        reader.onload = function() {
-            console.log(reader.result);
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                myFunction(this);
+            }
         };
+        xhttp.open("GET", "buxtonOverlook.xml", true);
+        xhttp.send();
+
+        function myFunction(xml) {
+          // console.log(xml.responseXML.all[1].attributes);
+          let bounds = [];
+          for (let i = 0; i < 4; i++) {
+            // console.log("bounds " + xml.responseXML.all[1].attributes[i].nodeValue);
+            bounds.push(xml.responseXML.all[1].attributes[i].nodeValue);
+          }
+
+          let mapSys = new coords(bounds);
+
+          const app = new PIXI.Application({ background: '#87CEFA', width: mapSys.get_width(), height: mapSys.get_height() });
+
+          document.body.appendChild(app.view);
+
+          let graphics = new PIXI.Graphics();
+          graphics.lineStyle(0);
+
+          const style = new PIXI.TextStyle({
+              fontFamily: 'Arial',
+              fontSize: 8,
+              stroke: '#4a1850'
+          });
+
+          
+          // console.log(osmtogeojson(xml.responseXML, {flatProperties: true}));
+          let nodes = osmtogeojson(xml.responseXML);
+
+          nodes.features.forEach(node => {
+            //console.log("node " + node.geometry.type);
+            //console.log(node);
+            if( node.geometry.type == "Point" && node.properties['addr:city'] == 'Saco' ){
+              //console.log(node.properties['addr:city']);
+              //properties
+              //addr:housenumber
+              //console.log(node);
+              //console.log(mapSys.get_map(node.geometry.coordinates[0], node.geometry.coordinates[1]));
+              let point = mapSys.get_map(node.geometry.coordinates[0], node.geometry.coordinates[1]);
+
+              graphics.beginFill(0x650a5a, 1);
+              graphics.drawRect(point.x, point.y, 2, 2);
+              graphics.endFill();
+
+              let basicText = new PIXI.Text(node.properties['addr:housenumber'], style);
+              basicText.x = point.x + 2;
+              basicText.y = point.y - 2;
+
+              app.stage.addChild(basicText);
+            } if( node.geometry.type == "LineString") {
+              console.log(node);
+              let tempP = mapSys.get_map(node.geometry.coordinates[0].x, node.geometry.coordinates[0].y);
+              graphics.lineStyle(2, '#000000');
+              graphics.moveTo(tempP.x, tempP.y);
+            
+              node.geometry.coordinates.forEach(p => {
+                //console.log(p);
+                let point = mapSys.get_map(p[0], p[1]);
+                //console.log(p);
+                console.log(point);
+                graphics.lineTo(point.x, point.y);
+              });
+            } else {
+              //console.log(node);
+            }
+          });
+
+          app.stage.addChild(graphics);
+            // var x, i, xmlDoc, txt;
+            // xmlDoc = xml.responseXML;
+            // txt = "";
+            // x = xmlDoc.documentElement.childNodes;
+            // for (i = 0; i < x.length; i++) { 
+            //     if (x[i].nodeType == 1) {
+            //         txt += x[i].nodeName + "<br>";
+            //     }
+            // }
+            // document.getElementById("demo").innerHTML = txt; 
+        }
+
+        // let parser = new DOMParser();
+        // let xmlDoc = parser.parsefrom(text,"text/xml");
+
+        // let parseString = require('xml2js').parseString;
+        // var xml = ' <node id="102553873" visible="true" version="3" changeset="117520662" timestamp="2022-02-17T13:02:39Z" user="tmerc58" uid="10275948" lat="43.5190047" lon="-70.4563748"/><node id="102555672" visible="true" version="3" changeset="117575894" timestamp="2022-02-18T17:53:23Z" user="tmerc58" uid="10275948" lat="43.5134605" lon="-70.4687340"/>';
+        // parseString(xml, function (err, result) {
+        //     console.dir(result);
+        // });
 
 
 
 
+        // const graphics = new PIXI.Graphics();
+
+        // app.stage.addChild(graphics);
+
+        // const thing = new PIXI.Graphics();
+
+        // app.stage.addChild(thing);
+        // thing.x = 0;
+        // thing.y = 0;
+
+        // app.stage.eventMode = 'static';
+        // app.stage.hitArea = app.screen;
+        // app.stage.addEventListener('click', (e) =>
+        // {
+
+        // });
+
+        // let elapsed = 0.0;
+        // app.ticker.add((delta) =>
+        // {
+        //     elapsed += delta;
 
 
-
-
-        const graphics = new PIXI.Graphics();
-
-        app.stage.addChild(graphics);
-
-        const thing = new PIXI.Graphics();
-
-        app.stage.addChild(thing);
-        thing.x = 0;
-        thing.y = 0;
-
-        app.stage.eventMode = 'static';
-        app.stage.hitArea = app.screen;
-        app.stage.addEventListener('click', (e) =>
-        {
-
-        });
-
-        let elapsed = 0.0;
-        app.ticker.add((delta) =>
-        {
-            elapsed += delta;
-
-
-        });
+        // });
 
 
       

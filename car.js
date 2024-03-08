@@ -200,3 +200,18 @@ class Car{
         //console.log("       car need lane change: " + this.need_change);
     }
 } 
+
+class CarManager{
+    carCompleted = 0; 
+    carGoal = 10; 
+
+    constructor( given_Goal){
+        this.carGoal = given_Goal;
+    } 
+
+    update_completed(x){
+        this.carCompleted = this.carCompleted + x;
+    }
+
+    
+}
