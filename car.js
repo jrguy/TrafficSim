@@ -18,7 +18,8 @@ class Car{
     present_road;
     blocked = false;
     need_change = false;
-    wait = 0; 
+    wait = 0;
+    lane_p = 0; 
 
     constructor( given_x, given_y, r){
         this.x = given_x;
@@ -48,6 +49,7 @@ class Car{
         this.present_lane.reset(this);
         this.x = this.startP.x; 
         this.y = this.startP.y;
+        this.lane_p = 0;
         this.at_end();
     }
 
