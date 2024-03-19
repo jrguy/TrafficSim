@@ -25,6 +25,7 @@
         const graphics = new PIXI.Graphics();
 
         let roadPs = [];
+        let roadPs2 = [];
         let roads = [];
         let running = true; 
         let current_car = 1; 
@@ -42,6 +43,35 @@
         roadPs[3] = new road_point(120, 200);
         roadPs[4] = new road_point(220, 280);
         roads.push( new Road(roadPs, true, 1, ROAD_SIZE));
+
+        roadPs2[0] = new road_point(200, 50);
+        roadPs2[1] = new road_point(160, 90);
+        roads.push( new Road(roadPs2, true, 1, ROAD_SIZE));
+
+        console.log(" intersection below");
+        let inters = [];
+        for (let i = 0; i < roads.length; i++) {
+            for (let l = i + 1; l < roads.length; l++) {
+                let val = FindIntersection( roads[i], roads[l]);
+                console.log(val);
+                let temp = new Intersection(val[0], val[1], Math.floor(ROAD_SIZE/2))
+                inters.push(temp);
+                roads[i].accept_inter(temp);
+                roads[l].accept_inter(temp);
+                temp.accept_road( roads[i] );
+                temp.accept_road( roads[l] );
+            }
+        }
+
+        roads.forEach(road => {
+            road.draw(graphics);
+        })
+
+        // console.log("interseciton at 160, 90");
+        inters.forEach(inter => {
+            console.log(" drawing iners ");
+            inter.draw_background(graphics);
+        })
 
         // roadPs[2] = new road_point(300, 50);
         // roadPs[3] = new road_point(100, 80);
@@ -61,10 +91,6 @@
         //         }
         //     }
         // }
-
-        roads.forEach(road => {
-            road.draw(graphics);
-        })
 
         // inters.forEach(inter => {
         //     inter.draw_background(graphics);
@@ -88,6 +114,13 @@
 
         roads.forEach(road => {
             road.check_cars_end();
+        });
+
+        app.stage.eventMode = 'static';
+        app.stage.hitArea = app.screen;
+        app.stage.addEventListener('click', (e) =>
+        {
+            running = !running; 
         });
 
         let elapsed = 0.0;

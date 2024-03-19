@@ -168,6 +168,7 @@ class Intersection{
     }
 
     draw_background(graphics){
+        console.log(" offset " + this.offest);
         graphics.beginFill('#87CEFA');
         graphics.drawRect(this.x-(this.offest*this.road_lanes_y), this.y-(this.offest*this.road_lanes_x), 
                 (this.offest*(this.road_lanes_y*2)) + (this.offest/2), (this.offest*(this.road_lanes_x*2)) + (this.offest/2));
@@ -209,9 +210,71 @@ function FindIntersection( line1, line2){
         }
  
     } else {
-        //lines with slope 
-        return [10,10];
+        //road_points
+        let inters = [];
+        let p1 = line1.road_points[0];
+        for (let i = 1; i < line1.road_points.length; i++) {
+            let p2 = line1.road_points[i];
+            let lineStand1 = FindStandardForm(p1, p2);
+            for (let l = 0; l < line2.road_points.length - 1; l++) {
+                let p3 = line2.road_points[l];
+                let p4 = line2.road_points[l + 1];
+                let lineStand2 = FindStandardForm(p3, p4);
+                let inter = FindIntersectionForm(lineStand1, lineStand2);
+                if( CheckIfWithin(p3.x, p4.x, inter[0]) && CheckIfWithin(p3.y, p4.y, inter[1])){
+                    // console.log("inter ");
+                    // console.log(inter);
+                    inters.push(inter);
+                }
+            }
+        }
+        if( inters.length > 0){
+            return inters;
+        } else {
+            return [10,10];
+        }
 
     }
-
 }
+
+function FindSlope( p1, p2){
+    let m = 0;
+    let cy = (p2.y - p1.y);
+    let cx = (p2.x - p1.x);
+    m = cy / cx;
+    return m;
+}
+
+function FindIntercept(p1, m){
+    let b = p1.y - (m * p1.x);
+    return b; 
+}
+
+function FindStandardForm(p1, p2){
+    let a = (p2.y - p1.y);
+    let b = (p1.x - p2.x);
+    let c = (p1.y * (p2.x - p1.x)) - (p1.x * (p2.y - p1.y));
+    return [a, b, c];
+}
+
+function FindIntersectionForm(e1, e2){
+    let a1 = e1[0];
+    let b1 = e1[1];
+    let c1 = e1[2];
+    let a2 = e2[0];
+    let b2 = e2[1];
+    let c2 = e2[2];
+
+    let x = ((b1*c2)-(b2*c1))/((a1*b2)-(a2*b1));
+    let y = ((a2*c1)-(a1*c2))/((a1*b2)-(a2*b1));
+    return [x, y];
+}
+
+function CheckIfWithin(v1, v2, c){
+    if( v1 < v2){
+        return v1 <= c && c <= v2;
+    } else {
+        return v2 <= c && c <= v1;
+    }
+}
+

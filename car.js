@@ -55,8 +55,18 @@ class Car{
 
     in_end(){
         let val = false; 
+        //console.log(" checking end " + this.endP.x + " end " + this.endP.y + " car " + this.x + " y " + this.y);
         if( this.endP.x - 5 <= this.x && this.x <= this.endP.x + 5 
             && this.endP.y - 5  <= this.y && this.y <= this.endP.y + 5  ) {
+           val = true;
+       }
+       return val; 
+    }
+
+    check_end(x, y ){
+        let val = false; 
+        //console.log(" checking end " + x+ " end " + y + " car " + this.x + " y " + this.y);
+        if( x - 5 <= this.x && this.x <= x + 5  && y - 5  <= this.y && this.y <= y + 5  ) {
            val = true;
        }
        return val; 

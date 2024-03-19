@@ -183,7 +183,7 @@ class Road{
         return Math.abs(Math.sqrt( a*a + b*b));
     }
     
-    check_car(i, val, car){
+    check_car(i, val, car, endPoint){
 
 
         let move = true; 
@@ -196,6 +196,9 @@ class Road{
         if(car.in_end()){
             this.reset_a.push([this.print_car_array(car),0]);
             move = false;
+        } else if(car.check_end(endPoint.x, endPoint.y)){
+            this.reset_a.push([this.print_car_array(car),0]);
+            move = false;         
         } else if( x > WIDTH || y > HEIGHT || x < 0 || y < 0   ){
             if(this.get_distance(x, y, car.startP.x, car.startP.y) > 25){
                 this.reset_a.push([this.print_car_array(car),0]);
@@ -213,10 +216,10 @@ class Road{
             for (let l = 0; l < this.intersections.length; l++) {
                 chX = x + ( val[0] * ( this.intersections[l].offest  + car.radius));
                 chY = y + ( val[1] * ( this.intersections[l].offest  + car.radius));
-                console.log(" build val x" + ( this.intersections[l].offest * this.intersections[l].road_lanes_x + car.radius) );
-                console.log(" build val y" + ( this.intersections[l].offest * this.intersections[l].road_lanes_y + car.radius) );
-                console.log(" current x " + x + " y " + y);
-                console.log(" change x " + chX +" y " + chY);
+                // console.log(" build val x" + ( this.intersections[l].offest * this.intersections[l].road_lanes_x + car.radius) );
+                // console.log(" build val y" + ( this.intersections[l].offest * this.intersections[l].road_lanes_y + car.radius) );
+                // console.log(" current x " + x + " y " + y);
+                // console.log(" change x " + chX +" y " + chY);
                 //update to match boths as it being true twice 
                 if(this.intersections[l].check_in_bounds(chX, chY)){
                     checkInter = true;
@@ -348,7 +351,6 @@ class Road{
             graphics.lineTo(this.road_points[i].x, this.road_points[i].y);
         }
 
-
         // for (let i = 0; i < this.road_points.length - 1; i++) {
 
         //     let startOffX = this.road_points[i].x - (this.x_offset  * (this.lanes.length/2));
@@ -385,7 +387,7 @@ class Road{
                     car.draw(graphics);
                     car.draw_end(graphics);
                     let val = lane.get_dir(car);
-                    this.check_car(i, val, car);
+                    this.check_car(i, val, car, lane.endP);
                     i++;
                 });
             });
@@ -642,15 +644,19 @@ class lane{
         // console.log(this.adjust_d[car_p]);
         if(this.lane_points[car.lane_p+1].x - 5 <= car.x && car.x <= this.lane_points[car.lane_p+1].x + 5 
             && this.lane_points[car.lane_p+1].y - 5 <= car.y && car.y <= this.lane_points[car.lane_p+1].y + 5 ){
-            console.log("chaning lane point");
+            // console.log("chaning lane point");
             car.lane_p = car.lane_p + 1;
             // console.log(" this.lane_points.length " + this.lane_points.length);
-            if( this.lane_points.length <= car.lane_p){
+            if( this.lane_points.length - 1 == car.lane_p){
                 car.lane_p = car.lane_p - 1;
             }
-            // console.log(" now " + car.lane_p);
+            // console.log("       NOWow " + car.lane_p);
 
         }
+        // console.log(" adjust array ");
+        // console.log(this.adjust_d);
+        // console.log(this.adjust_d[car.lane_p]);
+        // console.log(" adjust array close ");
         return [this.adjust_d[car.lane_p][0], this.adjust_d[car.lane_p][1], this.dir1, this.dir2];
     }
 
