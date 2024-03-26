@@ -14,6 +14,7 @@ class Intersection{
     offest = 0;
     road_lanes_x = 2; 
     road_lanes_y = 2; 
+    has_lights = true;
 
     constructor(given_x, given_y, offset){
         this.x = given_x - 4; 
@@ -23,6 +24,10 @@ class Intersection{
         this.bounds[2] = given_y - offset;
         this.bounds[3] = given_y + offset;
         this.offest = offset;
+    }
+
+    set_lights( lights){
+        this.has_lights = lights; 
     }
 
     accept_road( road){
@@ -44,11 +49,37 @@ class Intersection{
 
     check_in_bounds(x, y){
         let val = false;
+        //console.log(this.bounds);
         if( this.bounds[0] <= x && x <= this.bounds[1]
              && this.bounds[2] <= y && y <= this.bounds[3] ) {
             val = true;
         }
         return val; 
+    }
+
+    car_check_in_bounds(){
+        let inInter = false; 
+        this.roads.forEach(road => {
+            road.lanes.forEach(lane => {
+                lane.cars.forEach(lane_car => {
+                    if( this.bounds[0] <= lane_car.x && lane_car.x <= this.bounds[1]
+                        && this.bounds[2] <= lane_car.y && lane_car.y <= this.bounds[3] ) {
+                        inInter = true;
+                   }
+                   if(inInter){
+                    return;
+                   }
+                });
+                if(inInter){
+                    return;
+                }
+            });
+            if(inInter){
+                return;
+            }
+        });
+
+        return inInter;
     }
 
     check_lanes(i){
@@ -57,10 +88,13 @@ class Intersection{
 
     check_ends(end_point, car, x, y){
         let temp = false;
+        console.log(" end point " + end_point);
         this.roads.forEach(road => {
             road.lanes.forEach(lane => {
                 if(lane.endP == end_point ){
+                    console.log(" found end point");
                     if(lane.car_in_lane( car, x, y ) ){
+                        console.log(" car in lane and found end point");
                         temp = true;
                     }
                 }
@@ -75,7 +109,9 @@ class Intersection{
         let devalueLane = [];
         this.roads.forEach(road => {
             road.lanes.forEach(lane => {
-                let val = lane.get_dir();
+                //need the direction of the lane that is within the intersection 
+                //let val = lane.get_dir(car);
+                let val = this.get_car_lane_dir(lane, car);
                 optVal.push( new road_point(x+val[0], y+val[1]));
                 secondOptVal.push( new road_point(x+(val[0]*10), y+(val[1]*10)));
                 if(car.present_road == road){
@@ -114,7 +150,9 @@ class Intersection{
             road.lanes.forEach(lane => {
                 if( cur_lane == lane_v){
                     lane.add_car( car );
-                    lane.update_car_pos( car );
+                    let foundP = this.get_point_in_inter(lane, car);
+                    lane.update_car_pos_inter( car, foundP );
+
                     car.get_lane( lane );
                     car.get_road( road );
                     road.accept_car( car, false );
@@ -122,6 +160,67 @@ class Intersection{
                 cur_lane++;
             })
         });
+    }
+
+    get_point_in_inter(lane, car ){
+        for (let i = 0; i < lane.lane_points.length; i++) {
+            if(this.check_in_bounds(lane.lane_points[i].x, lane.lane_points[i].y)){
+                //lane point in inter 
+                return lane.lane_points[i];
+            }  
+        }
+
+        let e_x = car.present_lane.endP.x;
+        let e_y = car.present_lane.endP.y;
+        if(this.check_in_bounds(e_x , e_y)){
+            return car.present_lane.endP;
+        }
+
+        //look at point on line
+        for (let i = 0; i < lane.lane_points.length - 1; i++) {
+            
+        }
+    }
+
+
+    get_section_in_inter(lane){
+        for (let i = 0; i < lane.lane_points.length - 1; i++) {
+            let p1 = lane.lane_points[i];
+            let p2 = lane.lane_points[i + 1];
+
+        }
+
+
+    }
+
+    get_car_lane_dir(lane, car ){
+
+        let low_dis = 100;
+        let index = -1;
+        for (let i = 0; i < lane.lane_points.length - 1; i++) {
+            let p1 = lane.lane_points[i];
+            let p2 = lane.lane_points[i + 1];
+
+            let product = (this.get_dist(p1, car) + this.get_dist(p2, car)) - this.get_dist(p1, p2);
+            product = Math.abs(product);
+            if(product < low_dis){
+                index = i; 
+                low_dis = product; 
+                console.log(" new lowest ");
+                console.log(product)
+            }
+        }
+        if( index > -1){
+            console.log(" final dis ");
+            console.log(low_dis);
+            console.log(" index is " + index);
+            return lane.get_dir_segment( index );
+        }
+        return [0, 0];
+    }
+
+    get_dist(p1, p2){
+        return Math.abs( Math.sqrt(Math.pow( (p1.x - p2.x) , 2) + Math.pow( (p1.y - p2.y) , 2) ));
     }
 
     switch(){
@@ -168,8 +267,8 @@ class Intersection{
     }
 
     draw_background(graphics){
-        console.log(" offset " + this.offest);
-        graphics.beginFill('#87CEFA');
+        graphics.lineStyle(2, "#FFED0B");
+        // graphics.beginFill('#87CEFA');
         graphics.drawRect(this.x-(this.offest*this.road_lanes_y), this.y-(this.offest*this.road_lanes_x), 
                 (this.offest*(this.road_lanes_y*2)) + (this.offest/2), (this.offest*(this.road_lanes_x*2)) + (this.offest/2));
     }

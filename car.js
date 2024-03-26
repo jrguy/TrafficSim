@@ -18,6 +18,7 @@ class Car{
     present_road;
     blocked = false;
     need_change = false;
+    at_stop = false; 
     wait = 0;
     lane_p = 0; 
 
@@ -26,6 +27,7 @@ class Car{
         this.y = given_y; 
         this.radius = r;
         this.speed = Math.floor(Math.random() * 3) + 1;
+        this.speed = 1;
     }
 
     set_points(s1x, s1y, e1x, e1y ){
@@ -61,6 +63,10 @@ class Car{
            val = true;
        }
        return val; 
+    }
+
+    set_stop(val){
+        this.at_stop = val;
     }
 
     check_end(x, y ){
@@ -181,6 +187,30 @@ class Car{
             this.gotFLane = true; 
         } 
         this.present_lane = lane;
+
+        let low_dis = 100;
+        let index = -1;
+        for (let i = 0; i < lane.lane_points.length - 1; i++) {
+            let p1 = lane.lane_points[i];
+            let p2 = lane.lane_points[i + 1];
+
+            let product = (this.get_dist(p1, this) + this.get_dist(p2, this)) - this.get_dist(p1, p2);
+            product = Math.abs(product);
+            if(product < low_dis){
+                index = i; 
+                low_dis = product; 
+                console.log(" new ");
+                console.log(product);
+            }
+        }
+        if( index > -1){
+            console.log(" final dis ");
+            console.log(low_dis);
+            console.log(" index is " + index);
+            this.lane_p = index;
+        }
+
+        this.find_change(lane);
     }
 
     get_road( road ){
@@ -189,6 +219,22 @@ class Car{
             this.gotFRoad = true; 
         }
         this.present_road = road;
+    }
+
+    get_dist(p1, p2){
+        return Math.abs( Math.sqrt(Math.pow( (p1.x - p2.x) , 2) + Math.pow( (p1.y - p2.y) , 2) ));
+    }
+
+    find_change(lane){
+        if(this.endP != null){
+            console.log(" this end " + this.endP);
+            console.log(" lane end " + lane.endP);
+            if(lane.endP.x != this.endP.x || lane.endP.y != this.endP.y ){
+                this.need_change = true; 
+            } else {
+                this.need_change = false; 
+            }
+        }
     }
 
     draw( graphics){

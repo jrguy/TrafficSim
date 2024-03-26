@@ -54,7 +54,8 @@
             for (let l = i + 1; l < roads.length; l++) {
                 let val = FindIntersection( roads[i], roads[l]);
                 console.log(val);
-                let temp = new Intersection(val[0], val[1], Math.floor(ROAD_SIZE/2))
+                let temp = new Intersection(val[0][0], val[0][1], Math.floor(ROAD_SIZE/2))
+                temp.set_lights( false);
                 inters.push(temp);
                 roads[i].accept_inter(temp);
                 roads[l].accept_inter(temp);
@@ -69,9 +70,11 @@
 
         // console.log("interseciton at 160, 90");
         inters.forEach(inter => {
-            console.log(" drawing iners ");
             inter.draw_background(graphics);
         })
+
+
+
 
         // roadPs[2] = new road_point(300, 50);
         // roadPs[3] = new road_point(100, 80);
@@ -107,9 +110,7 @@
         let cars = [];
 
         let startPs = [];
-        for (let i = 0; i < roads.length; i++) {
-            startPs = startPs.concat( roads[i].get_start_p());
-        }
+        makeStartPs();
         makeCar();
 
         roads.forEach(road => {
@@ -168,11 +169,49 @@
 
                     endPs.push(roads[l].get_given_end(startPs[ran]));
 
-                    let ran_2 = Math.floor(Math.random() * endPs.length);
-                    car.set_end(endPs[ran_2].x, endPs[ran_2].y );
+                    let endFinal = [];
+                    endPs.forEach( ep => {
+                        let test = true;
+                        inters.forEach(inter => {
+                            if( inter.check_in_bounds(ep.x, ep.y)){
+                                test = false; 
+                            }
+                        })
+                        if(test){
+                            endFinal.push(ep);
+                        }
+                    })
+
+
+                    let ran_2 = Math.floor(Math.random() * endFinal.length);
+                    car.set_end(endFinal[ran_2].x, endFinal[ran_2].y );
                 }
                 
             }
+        }
+
+        function makeStartPs(){
+            for (let i = 0; i < roads.length; i++) {
+                startPs = startPs.concat( roads[i].get_start_p());
+            }
+
+            let endFinal = [];
+            startPs.forEach( ep => {
+                let test = true;
+                inters.forEach(inter => {
+                    if( inter.check_in_bounds(ep.x, ep.y)){
+                        test = false; 
+                    }
+                })
+                if(test){
+                    endFinal.push(ep);
+                }
+            })
+
+            startPs.length = 0;
+            endFinal.forEach(ep => {
+                startPs.push(ep);
+            });
         }
 
         function checkStartP(){
