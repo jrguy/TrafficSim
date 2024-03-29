@@ -1,8 +1,15 @@
 <!doctype html>
 <html>
   <head>
+    <style>
+        #log {
+            height: 200px;
+            width: 200px;
+        }
+    </style>
     <script src="https://pixijs.download/release/pixi.min.js"></script>
     <script src="https://unpkg.com/pixi.js@7.x/dist/pixi.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="car.js"></script>
     <script src="curveRoads.js"></script>
     <script src="inter.js"></script>
@@ -26,6 +33,7 @@
 
         let roadPs = [];
         let roadPs2 = [];
+        let roadPs3 = [];
         let roads = [];
         let running = true; 
         let current_car = 1; 
@@ -40,27 +48,49 @@
         roadPs[0] = new road_point(100, 50);
         roadPs[1] = new road_point(160, 90);
         roadPs[2] = new road_point(190, 150);
-        roadPs[3] = new road_point(120, 200);
-        roadPs[4] = new road_point(220, 280);
+        roadPs[3] = new road_point(150, 220);
+        roadPs[4] = new road_point(280, 340);
+        // roadPs[0] = new road_point(190, 150);
+        // roadPs[1] = new road_point(120, 200);
+        // roadPs[2] = new road_point(280, 340);
+        // roadPs[0] = new road_point(120, 200);
+        // roadPs[1] = new road_point(280, 340);
         roads.push( new Road(roadPs, true, 1, ROAD_SIZE));
 
-        roadPs2[0] = new road_point(200, 50);
-        roadPs2[1] = new road_point(160, 90);
-        roads.push( new Road(roadPs2, true, 1, ROAD_SIZE));
+        // roadPs2[0] = new road_point(200, 50);
+        // roadPs2[1] = new road_point(160, 90);
+        // roadPs2[0] = new road_point(190, 150);
+        // roadPs2[1] = new road_point(150, 220);
+        // roads.push( new Road(roadPs2, true, 1, ROAD_SIZE));
+
+        roadPs3[0] = new road_point(286, 232);
+        roadPs3[1] = new road_point(154, 305);
+        // roadPs3[0] = new road_point(280, 230);
+        // roadPs3[1] = new road_point(154, 230);
+        roads.push( new Road(roadPs3, true, 1, ROAD_SIZE));
+
+
 
         console.log(" intersection below");
         let inters = [];
+
         for (let i = 0; i < roads.length; i++) {
             for (let l = i + 1; l < roads.length; l++) {
                 let val = FindIntersection( roads[i], roads[l]);
+                console.log(" found intersections below ");
                 console.log(val);
-                let temp = new Intersection(val[0][0], val[0][1], Math.floor(ROAD_SIZE/2))
-                temp.set_lights( false);
-                inters.push(temp);
-                roads[i].accept_inter(temp);
-                roads[l].accept_inter(temp);
-                temp.accept_road( roads[i] );
-                temp.accept_road( roads[l] );
+                for (let m = 0; m < val.length; m++) {
+                    let temp = new Intersection(val[m][0], val[m][1], Math.floor(ROAD_SIZE/2))
+                    temp.set_lights( false);
+                    inters.push(temp);
+                }
+                // let temp = new Intersection(val[0][0], val[0][1], Math.floor(ROAD_SIZE/2))
+                // temp.set_lights( false);
+                // inters.push(temp);
+                // roads[i].accept_inter(temp);
+                // roads[l].accept_inter(temp);
+                // temp.accept_road( roads[i] );
+                // temp.accept_road( roads[l] );
             }
         }
 
@@ -122,6 +152,14 @@
         app.stage.addEventListener('click', (e) =>
         {
             running = !running; 
+            let m_x = e.client.x;
+            let m_y = e.client.y;
+            for (let l = 0; l < inters.length; l++) {
+                if( inters[l].check_in_bounds(m_x, m_y)){
+                    $("#log").prepend(" in intersection <br> " );
+                }
+            }
+            $("#log").prepend(" x = " + m_x + " y  = "  + m_y + " <br> " );
         });
 
         let elapsed = 0.0;
@@ -235,5 +273,8 @@
         }
       
     </script>
+    <div id="log">
+
+    </div>
   </body>
 </html>

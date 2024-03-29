@@ -1,7 +1,20 @@
 <html>
   <head>
+    <style>
+      #log {
+          height: 100px;
+          width: 130px;
+          float: right;
+      }
+      #controls {
+          height: 200px;
+          width: 100px;
+          float: right;
+      }
+  </style>
     <script src='osmtogeojson.js'></script>
     <!-- <script src="https://pixijs.download/release/pixi.min.js"></script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://unpkg.com/pixi.js@7.x/dist/pixi.min.js"></script>
     <script src="mapReader.js"></script>
     <script src="car.js"></script>
@@ -25,19 +38,27 @@
         let water = false;
         let house = false; 
 
-
+        let files = [];
+        files[0] = "maps/buxtonOverlook.xml";
+        files[1] = "maps/mapleStreet.xml";
+        files[2] = "maps/northStreet.xml";
+        files[3] = "maps/DunstanInters.xml";
+        files[4] = "maps/threeInterRouteOne.xml";
         let file = "maps/northStreet.xml";
 
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                myFunction(this);
-            }
-        };
-        xhttp.open("GET", "maps/mapleStreet.xml", true);
-        xhttp.send();
+        function genMap( id ){
+          var xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function() {
+              if (this.readyState == 4 && this.status == 200) {
+                makeMap(this);
+              }
+          };
+          xhttp.open("GET", files[id], true);
+          xhttp.send();
+        }
 
-        function myFunction(xml) {
+
+        function makeMap(xml) {
           let bounds = [];
           for (let i = 0; i < 4; i++) {
             bounds.push(xml.responseXML.all[1].attributes[i].nodeValue);
@@ -125,6 +146,29 @@
             }
           });
 
+          console.log(" intersection below");
+          let inters = [];
+
+          for (let i = 0; i < roads.length; i++) {
+              for (let l = i + 1; l < roads.length; l++) {
+                  let val = FindIntersection( roads[i], roads[l]);
+                  console.log(" found intersections below ");
+                  console.log(val);
+                  for (let m = 0; m < val.length; m++) {
+                      let temp = new Intersection(val[m][0], val[m][1], Math.floor(ROAD_SIZE/2))
+                      temp.set_lights( false);
+                      inters.push(temp);
+                  }
+                  // let temp = new Intersection(val[0][0], val[0][1], Math.floor(ROAD_SIZE/2))
+                  // temp.set_lights( false);
+                  // inters.push(temp);
+                  // roads[i].accept_inter(temp);
+                  // roads[l].accept_inter(temp);
+                  // temp.accept_road( roads[i] );
+                  // temp.accept_road( roads[l] );
+              }
+          }
+
           roads.forEach(road => {
             road.draw(graphics);
           });
@@ -132,6 +176,21 @@
           app.stage.addChild(graphics);
 
           const thing = new PIXI.Graphics();
+
+          app.stage.eventMode = 'static';
+          app.stage.hitArea = app.screen;
+          app.stage.addEventListener('click', (e) =>
+          {
+              running = !running; 
+              let m_x = e.client.x;
+              let m_y = e.client.y;
+              for (let l = 0; l < inters.length; l++) {
+                  if( inters[l].check_in_bounds(m_x, m_y)){
+                      $("#log").prepend(" in intersection <br> " );
+                  }
+              }
+              $("#log").prepend(" x = " + m_x + " y  = "  + m_y + " <br> " );
+          });
 
           app.stage.addChild(thing);
           thing.x = 0;
@@ -146,6 +205,11 @@
           roads.forEach(road => {
               road.check_cars_end();
           });
+
+          // console.log("interseciton at 160, 90");
+          inters.forEach(inter => {
+              inter.draw_background(graphics);
+          })
 
           let elapsed = 0.0;
           app.ticker.add((delta) =>
@@ -174,8 +238,6 @@
 
           });
         }
-
-
 
         function makeCar(){
             let car = new Car( 20, 20, CAR_SIZE );
@@ -223,10 +285,60 @@
             return ran; 
         }
       
+        window.onload = (event) => {
+          $('#water').change(function() {
+              if (this.checked) {
+                console.log(" water");
+                water = true;
+              } else {
+                console.log(" no water");
+                water = false;
+              }
+          });
 
+          $('#house').change(function() {
+              // this will contain a reference to the checkbox   
+              if (this.checked) {
+                console.log(" house");
+                house = true; 
+              } else {
+                console.log(" no house");
+                house = false; 
+              }
+          });
+
+          $('#maps').on('change', function() {
+            console.log( this.value );
+            cars = [];
+            startPs = [];
+            roads = [];
+
+            genMap( this.value );
+          });
+
+        };
 
 
       
     </script>
+    <div id="log">
+
+    </div>
+    <div id="controls">
+      <input type="checkbox" id="water" name="water" value="water">
+      <label for="water"> Turn on Water</label><br>
+      <input type="checkbox" id="house" name="house" value="house">
+      <label for="house"> Turn on House</label><br>
+
+      <select name="maps" id="maps" title="maps">
+        <option value="0">Map 1</option>
+        <option value="1">Map 2</option>
+        <option value="2">Map 3</option>
+        <option value="3">Map 4</option>
+        <option value="4">Map 5</option>
+      </select>
+
+    </div>
+
   </body>
 </html>

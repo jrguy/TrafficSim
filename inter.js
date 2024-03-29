@@ -311,18 +311,25 @@ function FindIntersection( line1, line2){
     } else {
         //road_points
         let inters = [];
+        
         let p1 = line1.road_points[0];
         for (let i = 1; i < line1.road_points.length; i++) {
             let p2 = line1.road_points[i];
             let lineStand1 = FindStandardForm(p1, p2);
+            console.log(" NEW LINE");
+            console.log(" line stand form " + lineStand1);
             for (let l = 0; l < line2.road_points.length - 1; l++) {
                 let p3 = line2.road_points[l];
                 let p4 = line2.road_points[l + 1];
                 let lineStand2 = FindStandardForm(p3, p4);
+                console.log(" lineStand2 stand form " + lineStand2);
                 let inter = FindIntersectionForm(lineStand1, lineStand2);
-                if( CheckIfWithin(p3.x, p4.x, inter[0]) && CheckIfWithin(p3.y, p4.y, inter[1])){
-                    // console.log("inter ");
-                    // console.log(inter);
+                // console.log(" inter section find results " + inter);
+                // inters.push(inter);
+                if( CheckIfWithin(p3.x, p4.x, inter[0]) && CheckIfWithin(p3.y, p4.y, inter[1])
+                    && CheckIfWithin(p1.x, p2.x, inter[0]) && CheckIfWithin(p1.y, p2.y, inter[1]) ){
+                    console.log("inter cound at ");
+                    console.log(inter);
                     inters.push(inter);
                 }
             }
@@ -370,6 +377,7 @@ function FindIntersectionForm(e1, e2){
 }
 
 function CheckIfWithin(v1, v2, c){
+    console.log(" v1 " + v1 + " v2 " + v2 + " and c " + c);
     if( v1 < v2){
         return v1 <= c && c <= v2;
     } else {
