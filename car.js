@@ -156,6 +156,11 @@ class Car{
 
     update_dir(given_x, given_y, top_speed){
         if(this.wait == 0) {
+            // console.log(" top " + top_speed);
+            // console.log( " full seped ");
+            // console.log( (given_x * this.speed ) );
+            // console.log(" limited ");
+            // console.log((given_y * top_speed ));
             if( (given_x * this.speed ) <= top_speed && (given_y * this.speed ) <= top_speed  ) {
                 this.x = this.x + (given_x * this.speed ); 
                 this.y = this.y + (given_y * this.speed ); 
@@ -199,14 +204,14 @@ class Car{
             if(product < low_dis){
                 index = i; 
                 low_dis = product; 
-                console.log(" new ");
-                console.log(product);
+                // console.log(" new ");
+                // console.log(product);
             }
         }
         if( index > -1){
-            console.log(" final dis ");
-            console.log(low_dis);
-            console.log(" index is " + index);
+            // console.log(" final dis ");
+            // console.log(low_dis);
+            // console.log(" index is " + index);
             this.lane_p = index;
         }
 
@@ -227,8 +232,8 @@ class Car{
 
     find_change(lane){
         if(this.endP != null){
-            console.log(" this end " + this.endP);
-            console.log(" lane end " + lane.endP);
+            // console.log(" this end " + this.endP);
+            // console.log(" lane end " + lane.endP);
             if(lane.endP.x != this.endP.x || lane.endP.y != this.endP.y ){
                 this.need_change = true; 
             } else {

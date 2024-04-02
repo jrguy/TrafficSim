@@ -37,6 +37,7 @@
         let roads = [];
         let water = false;
         let house = false; 
+        let sizeRoad = 6;
 
         let files = [];
         files[0] = "maps/buxtonOverlook.xml";
@@ -106,13 +107,15 @@
 
                   //road
                   console.log(" size " + node.geometry.coordinates.length);
-                  roadPs = []
-                  node.geometry.coordinates.forEach(p => {
-                    let point = mapSys.get_map(p[0], p[1]);
-                    roadPs.push(point);
-                    
-                  });
-                  roads.push( new Road(roadPs, true, 1, ROAD_SIZE));
+                  if( node.geometry.coordinates.length >= sizeRoad) {
+                    roadPs = []
+                    node.geometry.coordinates.forEach(p => {
+                      let point = mapSys.get_map(p[0], p[1]);
+                      roadPs.push(point);
+                      
+                    });
+                    roads.push( new Road(roadPs, true, 1, ROAD_SIZE));
+                  }
                   
 
                   // let tempP = mapSys.get_map(node.geometry.coordinates[0][0], node.geometry.coordinates[0][1]);
@@ -128,6 +131,7 @@
 
             } else {
               if(water){
+                console.log(" water on");
                 if(node.properties['waterway'] == 'stream'  || node.properties['waterway'] == 'river'){
 
                   let tempP = mapSys.get_map(node.geometry.coordinates[0][0], node.geometry.coordinates[0][1]);
@@ -149,25 +153,25 @@
           console.log(" intersection below");
           let inters = [];
 
-          for (let i = 0; i < roads.length; i++) {
-              for (let l = i + 1; l < roads.length; l++) {
-                  let val = FindIntersection( roads[i], roads[l]);
-                  console.log(" found intersections below ");
-                  console.log(val);
-                  for (let m = 0; m < val.length; m++) {
-                      let temp = new Intersection(val[m][0], val[m][1], Math.floor(ROAD_SIZE/2))
-                      temp.set_lights( false);
-                      inters.push(temp);
-                  }
-                  // let temp = new Intersection(val[0][0], val[0][1], Math.floor(ROAD_SIZE/2))
-                  // temp.set_lights( false);
-                  // inters.push(temp);
-                  // roads[i].accept_inter(temp);
-                  // roads[l].accept_inter(temp);
-                  // temp.accept_road( roads[i] );
-                  // temp.accept_road( roads[l] );
-              }
-          }
+          // for (let i = 0; i < roads.length; i++) {
+          //     for (let l = i + 1; l < roads.length; l++) {
+          //         let val = FindIntersection( roads[i], roads[l]);
+          //         console.log(" found intersections below ");
+          //         console.log(val);
+          //         for (let m = 0; m < val.length; m++) {
+          //             let temp = new Intersection(val[m][0], val[m][1], Math.floor(ROAD_SIZE/2))
+          //             temp.set_lights( false);
+          //             inters.push(temp);
+          //         }
+          //         // let temp = new Intersection(val[0][0], val[0][1], Math.floor(ROAD_SIZE/2))
+          //         // temp.set_lights( false);
+          //         // inters.push(temp);
+          //         // roads[i].accept_inter(temp);
+          //         // roads[l].accept_inter(temp);
+          //         // temp.accept_road( roads[i] );
+          //         // temp.accept_road( roads[l] );
+          //     }
+          // }
 
           roads.forEach(road => {
             road.draw(graphics);
@@ -307,13 +311,24 @@
               }
           });
 
-          $('#maps').on('change', function() {
-            console.log( this.value );
-            cars = [];
-            startPs = [];
-            roads = [];
+          $('#size').change(function() {
+              // this will contain a reference to the checkbox   
+              console.log( this.value );
+              sizeRoad =  this.value;
+          });
 
-            genMap( this.value );
+          size
+
+          $('#maps').on('change', function() {
+            if( this.value != -1){
+              console.log( this.value );
+              //app.clear();
+              cars = [];
+              startPs = [];
+              roads = [];
+
+              genMap( this.value );
+            }
           });
 
         };
@@ -329,8 +344,11 @@
       <label for="water"> Turn on Water</label><br>
       <input type="checkbox" id="house" name="house" value="house">
       <label for="house"> Turn on House</label><br>
+      <input type="input" id="size" name="size" value="0">
+      <label for="house"> Size of Roads</label><br>
 
       <select name="maps" id="maps" title="maps">
+        <option value="-1">-?-</option>
         <option value="0">Map 1</option>
         <option value="1">Map 2</option>
         <option value="2">Map 3</option>

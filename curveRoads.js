@@ -47,8 +47,8 @@ class Road{
         // console.log(" slope " + this.x + " y " + this.y);
         let m = ( slope_y / slope_x);
         let per_m = -1/m;
-        console.log(" actuale slope " + m);
-        console.log(" per slope " + per_m);
+        // console.log(" actuale slope " + m);
+        // console.log(" per slope " + per_m);
 
 
         for (let i = 0; i < num_lanes; i++) {
@@ -223,8 +223,8 @@ class Road{
 
         if(move){
             //check lane size
-            x = x + (val[0] * 25)
-            y = y + (val[1] * 25)
+            x = x + (val[0] * 20)
+            y = y + (val[1] * 20)
             let chX = x;
             let chY = y;
 
@@ -264,6 +264,8 @@ class Road{
 
                 if(checkInter){
                     // console.log(" found in inter");
+                    // console.log(" vals jhere ");
+                    // console.log(val);
                     if( val[0] > 0 || val[1] > 0){
                         if( !this.intersections[l].check_lanes(val[2]) ){
                             move = false; 
@@ -352,6 +354,8 @@ class Road{
         }
 
         if(move){
+            // console.log(" moement below ");
+            // console.log(val);
             car.update_dir(val[0], val[1], this.max_speed);
         }
     }
@@ -469,7 +473,7 @@ class Road{
             }
 
             if(this.change_a.length > 0){
-                console.log("       leng change_a " + this.change_a.length);
+                // console.log("       leng change_a " + this.change_a.length);
                 for (let i = 0; i < this.change_a.length; i++) {
                     //console.log(this.change_a[i]);
                     // //remove car from lane
@@ -482,7 +486,7 @@ class Road{
                 }
 
                 this.change_a.length = 0;
-                console.log("       DONE change_a " + this.change_a.length);
+                // console.log("       DONE change_a " + this.change_a.length);
             }
 
             if(this.reset_a.length > 0){
@@ -536,7 +540,29 @@ function reduce(numerator,denominator){
     };
     gcd = gcd(numerator,denominator);
     return [numerator/gcd, denominator/gcd];
-  }
+}
+
+function dist(p1, p2){
+    let a = p1.x - p2.x; 
+    let b = p1.y - p2.y;
+
+    return Math.sqrt( a*a + b*b);
+}
+
+function find_t_p(p1, p2, t){
+    let x = (1 - t)*p1.x + (t * p2.x);
+    let y = (1 - t)*p1.y + (t * p2.y);
+
+    return new road_point(x, y);
+}
+
+function find_dif( p1, p2){
+    let x = p2.x - p1.x; 
+    let y = p2.y - p1.y;
+    x = Math.round(100*x)/100;
+    y = Math.round(100*y)/100;
+    return new road_point(x, y);
+}
 
 class lane{
     startP; 
@@ -567,44 +593,66 @@ class lane{
             // console.log(" slope " + this.x + " y " + this.y);
             let m = ( this.y / this.x);
             // console.log(" slope is " + ( this.y / this.x));
+            // console.log(" reduced slope ");
+            let val = reduce(this.y,this.x);
+            // console.log( val );
             this.x = this.x < 0 ? -1 : 1; 
             this.y = this.y < 0 ? -1 : 1; 
             // console.log(" pow " + this.x + " y " + this.y);
+
+            let d = dist(points[i], points[i + 1]);
+            // console.log(" found dist " + d);
+            let t = 1 / d; 
+            // console.log(" found t " + t );
+            let found_s = find_t_p(points[i], points[i + 1], t);
+            // console.log(" found next step " + found_s);
+            let step = find_dif( points[i], found_s);
+            // console.log(" step  step " + step);
+            // console.log(step);
+            this.adjust_d.push([step.x, step.y]);
+
+
     
-            if( m < 1){
-                this.x = this.x / Math.abs(m);
-                this.y = this.y;
-            } else {
-                this.x = this.x;
-                this.y = this.y * Math.abs(m);
-            }
+            // if( m < 1){
+            //     this.x = this.x / Math.abs(m);
+            //     this.y = this.y;
+            // } else {
+            //     this.x = this.x;
+            //     this.y = this.y * Math.abs(m);
+            // }
     
             // console.log(" final slope " + this.x + " y " + this.y);
-            this.adjust_d.push([this.x, this.y]);
+            // this.adjust_d.push([this.x, this.y]);
             
         }
 
-        // console.log(this.adjust_d);
-
-
-        if(this.startP.x < this.endP.x){
-            // this.x = 1;
-            this.dir1 = 0;
-            this.dir2 = 1;
-        } else {
-            // this.x = -1;
-            this.dir1 = 0;
-            this.dir2 = 1;
-        }
-        if( this.startP.y < this.endP.y){
-            // this.y = 1;
-            this.dir1 = 2; 
-            this.dir2 = 3;
-        } else {
-            // this.y = -1;
+        let x_dif = Math.abs( this.startP.x - this.endP.x);
+        let y_dif = Math.abs( this.startP.y - this.endP.y);
+        if( y_dif > x_dif){
             this.dir1 = 2;
-            this.dir2 = 3;  
+            this.dir2 = 3; 
+        } else {
+            this.dir1 = 0;
+            this.dir2 = 1;
         }
+        // if(this.startP.x < this.endP.x){
+        //     // this.x = 1;
+        //     this.dir1 = 0;
+        //     this.dir2 = 1;
+        // } else {
+        //     // this.x = -1;
+        //     this.dir1 = 0;
+        //     this.dir2 = 1;
+        // }
+        // if( this.startP.y < this.endP.y){
+        //     // this.y = 1;
+        //     this.dir1 = 2; 
+        //     this.dir2 = 3;
+        // } else {
+        //     // this.y = -1;
+        //     this.dir1 = 2;
+        //     this.dir2 = 3;  
+        // }
     }
 
     find_slope(start, end, step){

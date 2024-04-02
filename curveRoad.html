@@ -57,11 +57,11 @@
         // roadPs[1] = new road_point(280, 340);
         roads.push( new Road(roadPs, true, 1, ROAD_SIZE));
 
-        // roadPs2[0] = new road_point(200, 50);
-        // roadPs2[1] = new road_point(160, 90);
+        roadPs2[0] = new road_point(200, 50);
+        roadPs2[1] = new road_point(160, 90);
         // roadPs2[0] = new road_point(190, 150);
         // roadPs2[1] = new road_point(150, 220);
-        // roads.push( new Road(roadPs2, true, 1, ROAD_SIZE));
+        roads.push( new Road(roadPs2, true, 1, ROAD_SIZE));
 
         roadPs3[0] = new road_point(286, 232);
         roadPs3[1] = new road_point(154, 305);
@@ -83,6 +83,10 @@
                     let temp = new Intersection(val[m][0], val[m][1], Math.floor(ROAD_SIZE/2))
                     temp.set_lights( false);
                     inters.push(temp);
+                    roads[i].accept_inter(temp);
+                    roads[l].accept_inter(temp);
+                    temp.accept_road( roads[i] );
+                    temp.accept_road( roads[l] );
                 }
                 // let temp = new Intersection(val[0][0], val[0][1], Math.floor(ROAD_SIZE/2))
                 // temp.set_lights( false);

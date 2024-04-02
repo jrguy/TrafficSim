@@ -5,6 +5,7 @@ class Intersection{
     roads = [];
     stop = '#DE3249';
     green = '#32DE49';
+    yellow = '#F7B500 ';
     lanes = [false, false, true, true];
     bounds = [];
     roads = [];
@@ -88,13 +89,13 @@ class Intersection{
 
     check_ends(end_point, car, x, y){
         let temp = false;
-        console.log(" end point " + end_point);
+        // console.log(" end point " + end_point);
         this.roads.forEach(road => {
             road.lanes.forEach(lane => {
                 if(lane.endP == end_point ){
-                    console.log(" found end point");
+                    // console.log(" found end point");
                     if(lane.car_in_lane( car, x, y ) ){
-                        console.log(" car in lane and found end point");
+                        // console.log(" car in lane and found end point");
                         temp = true;
                     }
                 }
@@ -151,6 +152,8 @@ class Intersection{
                 if( cur_lane == lane_v){
                     lane.add_car( car );
                     let foundP = this.get_point_in_inter(lane, car);
+                    // console.log(" foundP found ");
+                    // console.log(foundP);
                     lane.update_car_pos_inter( car, foundP );
 
                     car.get_lane( lane );
@@ -177,9 +180,19 @@ class Intersection{
         }
 
         //look at point on line
-        for (let i = 0; i < lane.lane_points.length - 1; i++) {
-            
+        let car_x = car.x; 
+        let car_y = car.y;
+        let val = lane.get_dir( car);
+        // console.log("val " + val);
+        for (let i = 0; i < 10; i++) {
+            if(this.check_in_bounds(car_x, car_y)){
+                return new road_point(car_x, car_y);
+            }
+            car_x = car_x + val[0];
+            car_y = car_y + val[1];
         }
+
+        return new road_point(this.x, this.y);
     }
 
 
@@ -189,8 +202,6 @@ class Intersection{
             let p2 = lane.lane_points[i + 1];
 
         }
-
-
     }
 
     get_car_lane_dir(lane, car ){
@@ -206,14 +217,14 @@ class Intersection{
             if(product < low_dis){
                 index = i; 
                 low_dis = product; 
-                console.log(" new lowest ");
-                console.log(product)
+                // console.log(" new lowest ");
+                // console.log(product)
             }
         }
         if( index > -1){
-            console.log(" final dis ");
-            console.log(low_dis);
-            console.log(" index is " + index);
+            // console.log(" final dis ");
+            // console.log(low_dis);
+            // console.log(" index is " + index);
             return lane.get_dir_segment( index );
         }
         return [0, 0];
@@ -260,7 +271,11 @@ class Intersection{
 
     draw_color(light, graphics){
         if( light){
-            graphics.beginFill(this.green);
+            if(this.time + 40 > this.switchT) {
+                graphics.beginFill(this.yellow);
+            } else {
+                graphics.beginFill(this.green);
+            }
         } else {
             graphics.beginFill(this.stop);
         }
@@ -287,7 +302,7 @@ function FindIntersection( line1, line2){
 
     if( line1.start_x == line1.end_x ) {0
         line1Hor = true;
-    } else if( line1.start_y == line1.start_y){
+    } else if( line1.start_y == line1.end_y){
         line1Ver = true; 
     }
 
@@ -296,10 +311,10 @@ function FindIntersection( line1, line2){
 
     if( line2.start_x == line2.end_x ) {
         line2Hor = true;
-    } else if( line2.start_y == line2.start_y){
+    } else if( line2.start_y == line2.end_y){
         line2Ver = true; 
     }
-
+    // console.log( "line1Hor " + line1Hor + "  line2Ver " + line2Ver);
     if( (line1Hor && line2Ver) || (line1Ver && line2Hor) ){
         //some lines are vertical 
         if( line1Hor && line2Ver ){
@@ -316,20 +331,21 @@ function FindIntersection( line1, line2){
         for (let i = 1; i < line1.road_points.length; i++) {
             let p2 = line1.road_points[i];
             let lineStand1 = FindStandardForm(p1, p2);
-            console.log(" NEW LINE");
-            console.log(" line stand form " + lineStand1);
+            // console.log("   NEW LINE");
+            // console.log(" line stand form " + lineStand1);
             for (let l = 0; l < line2.road_points.length - 1; l++) {
+                // console.log("   COMPARE seconday line point " + l);
                 let p3 = line2.road_points[l];
                 let p4 = line2.road_points[l + 1];
                 let lineStand2 = FindStandardForm(p3, p4);
-                console.log(" lineStand2 stand form " + lineStand2);
+                // console.log(" lineStand2 stand form " + lineStand2);
                 let inter = FindIntersectionForm(lineStand1, lineStand2);
                 // console.log(" inter section find results " + inter);
                 // inters.push(inter);
                 if( CheckIfWithin(p3.x, p4.x, inter[0]) && CheckIfWithin(p3.y, p4.y, inter[1])
                     && CheckIfWithin(p1.x, p2.x, inter[0]) && CheckIfWithin(p1.y, p2.y, inter[1]) ){
-                    console.log("inter cound at ");
-                    console.log(inter);
+                    // console.log("inter cound at ");
+                    // console.log(inter);
                     inters.push(inter);
                 }
             }
@@ -377,7 +393,7 @@ function FindIntersectionForm(e1, e2){
 }
 
 function CheckIfWithin(v1, v2, c){
-    console.log(" v1 " + v1 + " v2 " + v2 + " and c " + c);
+    // console.log(" v1 " + v1 + " v2 " + v2 + " and c " + c);
     if( v1 < v2){
         return v1 <= c && c <= v2;
     } else {

@@ -1,0 +1,107 @@
+<html>
+  <head>
+    <style>
+      #log {
+          height: 100px;
+          width: 130px;
+          float: right;
+      }
+      #controls {
+          height: 200px;
+          width: 100px;
+      }
+  </style>
+    <script src='osmtogeojson.js'></script>
+    <!-- <script src="https://pixijs.download/release/pixi.min.js"></script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/pixi.js@7.x/dist/pixi.min.js"></script>
+  </head>
+  <body>
+    <script>
+        let water = false;
+        let house = false; 
+        let sizeRoad = 6;
+
+        let files = [];
+        files[0] = "maps/buxtonOverlook.xml";
+        files[1] = "maps/mapleStreet.xml";
+        files[2] = "maps/northStreet.xml";
+        files[3] = "maps/DunstanInters.xml";
+        files[4] = "maps/threeInterRouteOne.xml";
+
+        window.onload = (event) => {
+          $('#water').change(function() {
+              if (this.checked) {
+                console.log(" water");
+                water = true;
+              } else {
+                console.log(" no water");
+                water = false;
+              }
+          });
+
+          $('#house').change(function() {
+              // this will contain a reference to the checkbox   
+              if (this.checked) {
+                console.log(" house");
+                house = true; 
+              } else {
+                console.log(" no house");
+                house = false; 
+              }
+          });
+
+          $('#size').change(function() {
+              // this will contain a reference to the checkbox   
+              console.log( this.value );
+              sizeRoad =  this.value;
+          });
+
+          size
+
+          $('#maps').on('change', function() {
+            if( this.value != -1){
+              console.log( this.value );
+              //app.clear();
+              cars = [];
+              startPs = [];
+              roads = [];
+
+              genMap( this.value );
+            }
+          });
+
+        };
+      
+    </script>
+    <div id="log">
+
+    </div>
+    <div id="controls">
+      <input type="checkbox" id="water" name="water" value="water">
+      <label for="water"> Turn on Water</label><br>
+      <input type="checkbox" id="house" name="house" value="house">
+      <label for="house"> Turn on House</label><br>
+      
+      <label for="house"> Size of Roads</label>
+      <input type="input" id="size" name="size" value="0"><br>
+      
+      <label for="runTime"> Number of Runs: </label>
+      <input type="input" id="runTime" name="runTime" value="1"><br>
+
+      <label for="runTime"> Choose of Maps: </label>
+      <select name="maps" id="maps" title="maps">
+        <option value="-1">-?-</option>
+        <option value="0">Map 1</option>
+        <option value="1">Map 2</option>
+        <option value="2">Map 3</option>
+        <option value="3">Map 4</option>
+        <option value="4">Map 5</option>
+      </select>
+
+      <input type="submit" value="Submit">
+
+    </div>
+
+  </body>
+</html>
