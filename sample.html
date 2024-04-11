@@ -14,9 +14,9 @@
         const WIDTH = 640; 
         const HEIGHT = 380;
         const HOR_ROAD = 1; 
-        const VER_ROAD = 3;
+        const VER_ROAD = 1;
         const CARS = 1;
-        const MAX_CARS = 1;
+        const MAX_CARS = 10;
         const ROAD_SIZE = 20;
         const CAR_SIZE = 8;
         const app = new PIXI.Application({ background: '#87CEFA', width: WIDTH, height: HEIGHT });
@@ -99,8 +99,11 @@
 
         inters.forEach(inter => {
             // console.log(inter);
+            //inter.update_running(false);
             inter.draw_background(graphics);
+            inter.update_mode("greedy");
         })
+        inters[0].update_mode("basic");
 
         app.stage.addChild(graphics);
 
@@ -143,9 +146,12 @@
 
             if( running){
                 thing.clear();
+                console.log("    NEW ITER");
                 inters.forEach(inter => {
+                    console.log(" new inter ");
                     inter.update_time(delta);
                     inter.draw( thing );
+                    inter.check_lanes_for_cars(50);
                 });
             }
             roads.forEach(road => {

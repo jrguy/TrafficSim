@@ -223,8 +223,9 @@ class Road{
 
         if(move){
             //check lane size
-            x = x + (val[0] * 20)
-            y = y + (val[1] * 20)
+            let offset_dist = 20;
+            x = x + (val[0] * offset_dist)
+            y = y + (val[1] * offset_dist)
             let chX = x;
             let chY = y;
 
@@ -269,10 +270,12 @@ class Road{
                     if( val[0] > 0 || val[1] > 0){
                         if( !this.intersections[l].check_lanes(val[2]) ){
                             move = false; 
+                            car.set_stopped(true);
                         }
                     } else {
                         if( !this.intersections[l].check_lanes(val[3]) ){
                             move = false; 
+                            car.set_stopped(true);
                         }
                     }
 
@@ -294,7 +297,7 @@ class Road{
                     
                     //check if intersection roads has end point 
                     if( move && car.need_change){
-
+                        car.set_stopped(false);
                         if( this.intersections[l].check_ends(car.endP, car, x, y) ){
                             // console.log(" found end update " + l);
                             this.update_a.push([this.print_car_array(car),l]);
@@ -309,46 +312,59 @@ class Road{
             }
 
             let testX = car.x + val[0];
-            let testY = car.y + val[1]
+            let testY = car.y + val[1];
             car.present_lane.cars.forEach(lane_car => {
                 if( car.name != lane_car.name ){
-                    if( car.x == lane_car.x ){
-                        if( val[1] > 0 ){
-                            for( let i = testY; i <= y; i++){
-                                if(i == lane_car.y){
-                                    move = false; 
-                                    car.update_blocked(true);
-                                    i = y + 1;
-                                }
-                            }
-                        } else {
-                            for( let i = testY; i >= y; i--){
-                                if(i == lane_car.y){
-                                    move = false; 
-                                    car.update_blocked(true);
-                                    i = y - 1;
-                                }
-                            }
+                    //offset_dist
+                    for (let i = 0; i < offset_dist; i++) {
+                        if(testY == lane_car.y && testX == lane_car.x){
+                            move = false; 
+                            car.update_blocked(true);
+                            i = y + 1;
                         }
-                    } else if( car.y == lane_car.y ){
-                        if( val[0] > 0 ){
-                            for( let i = testX; i <= x; i++){
-                                if( i == lane_car.x){
-                                    move = false; 
-                                    car.update_blocked(true);
-                                    i = x + 1;
-                                }
-                            }
-                        } else {
-                            for( let i = testX; i >= x; i--){
-                                if( i == lane_car.x){
-                                    move = false; 
-                                    car.update_blocked(true);
-                                    i = x - 1;
-                                }
-                            }
-                        }
+                        
+                        testX = testX + val[0];
+                        testY = testY + val[1];
                     }
+
+                    // if( car.x == lane_car.x ){
+                    //     if( val[1] > 0 ){
+                    //         for( let i = testY; i <= y; i++){
+                    //             if(i == lane_car.y){
+                    //                 move = false; 
+                    //                 car.update_blocked(true);
+                    //                 i = y + 1;
+                    //             }
+                    //         }
+                    //     } else {
+                    //         for( let i = testY; i >= y; i--){
+                    //             if(i == lane_car.y){
+                    //                 move = false; 
+                    //                 car.update_blocked(true);
+                    //                 i = y - 1;
+                    //             }
+                    //         }
+                    //     }
+                    // } else if( car.y == lane_car.y ){
+                    //     if( val[0] > 0 ){
+                    //         for( let i = testX; i <= x; i++){
+                    //             if( i == lane_car.x){
+                    //                 move = false; 
+                    //                 car.update_blocked(true);
+                    //                 i = x + 1;
+                    //             }
+                    //         }
+                    //     } else {
+                    //         for( let i = testX; i >= x; i--){
+                    //             if( i == lane_car.x){
+                    //                 move = false; 
+                    //                 car.update_blocked(true);
+                    //                 i = x - 1;
+                    //             }
+                    //         }
+                    //     }
+                    // }
+
                 }
             });
         }

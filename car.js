@@ -19,6 +19,7 @@ class Car{
     blocked = false;
     need_change = false;
     at_stop = false; 
+    stopped = false;
     wait = 0;
     lane_p = 0; 
 
@@ -67,6 +68,10 @@ class Car{
 
     set_stop(val){
         this.at_stop = val;
+    }
+
+    set_stopped(val){
+        this.stopped = val;
     }
 
     check_end(x, y ){

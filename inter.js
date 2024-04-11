@@ -6,16 +6,22 @@ class Intersection{
     stop = '#DE3249';
     green = '#32DE49';
     yellow = '#F7B500 ';
-    lanes = [false, false, true, true];
+    //lanes = [false, false, true, true];
+    lanes = [false, false, false, false];
+    running = true; 
     bounds = [];
     roads = [];
     time = 0;
-    switchT = Math.floor(Math.random() * (200 - 180)) + (180); 
+    //switchT = Math.floor(Math.random() * (200 - 180)) + (180); 
+    switchT = 50;
+    min_time = 50;
     need_draw = false;
     offest = 0;
     road_lanes_x = 2; 
     road_lanes_y = 2; 
     has_lights = true;
+    mode = "basic";
+    zones;
 
     constructor(given_x, given_y, offset){
         this.x = given_x - 4; 
@@ -42,6 +48,21 @@ class Intersection{
 
     road_go(i){
         return false;
+    }
+
+    update_running(given){
+        this.running = given;
+        this.time = 0;
+    }
+
+    update_mode(given){
+        this.mode = given;
+        if(this.mode == "greedy"){
+            this.turn_all(false);
+        }
+        if(this.mode == "basic"){
+            this.lanes = [false, false, true, true];
+        }
     }
 
     check_bounds(i){
@@ -85,6 +106,41 @@ class Intersection{
 
     check_lanes(i){
         return this.lanes[i];
+    }
+
+    check_lanes_for_cars(dist){
+        let cars_stopped = 0;
+        let zones = [0, 0, 0, 0];
+        this.roads.forEach(road => {
+            road.lanes.forEach(lane => {
+                lane.cars.forEach(car => {
+                    if(car.stopped){
+                        cars_stopped += 1;
+                    }
+
+                    if( this.bounds[0] - dist <= car.x && car.x <= this.bounds[0] ){
+                        zones[0] += 1;
+                    }
+
+                    if( this.bounds[1] + dist >= car.x && car.x >= this.bounds[1] ){
+                        zones[1] += 1;
+                    }
+
+                    if( this.bounds[2] - dist <= car.y && car.y <= this.bounds[2] ){
+                        zones[2] += 1;
+                    }
+
+                    if( this.bounds[3] + dist >= car.y && car.y >= this.bounds[3] ){
+                        zones[3] += 1;
+                    }
+
+                });
+            });
+        });
+
+        console.log(" stopped " + cars_stopped);
+        console.log("zones " + zones);
+        this.zones = zones; 
     }
 
     check_ends(end_point, car, x, y){
@@ -234,6 +290,12 @@ class Intersection{
         return Math.abs( Math.sqrt(Math.pow( (p1.x - p2.x) , 2) + Math.pow( (p1.y - p2.y) , 2) ));
     }
 
+    turn_all(val){
+        for (let i = 0; i < this.lanes.length; i++) {
+            this.lanes[i] = val;
+        }
+    }
+
     switch(){
         for (let i = 0; i < this.lanes.length; i++) {
             this.lanes[i] = !this.lanes[i];
@@ -242,10 +304,60 @@ class Intersection{
         this.need_draw = true; 
     }
 
+    switch_specific(val){
+        this.turn_all(false);
+
+        let set1 = false; 
+        if(val == 0 || val == 1){
+            set1 = true; 
+        }
+
+        for (let i = 0; i < this.lanes.length; i++) {
+            if(set1){
+                if(i == 0 || i == 1){
+                    this.lanes[i] = true;
+                } else {
+                    this.lanes[i] = false;
+                }
+            } else {
+                if(i == 0 || i == 1){
+                    this.lanes[i] = false;
+                } else {
+                    this.lanes[i] = true;
+                }
+            }
+        }
+
+        this.time = 0; 
+        this.need_draw = true; 
+    }
+
+    check_greedy(){
+        let found = -1;
+        for (let i = 0; i < this.zones.length; i++) {
+            if( this.zones[i] >= 1){
+                found = i;
+                i = this.zones.length; 
+            }
+        }
+        return found; 
+    }
+
     update_time(delta){
-        this.time = this.time + delta; 
-        if( this.time > this.switchT){
-            this.switch();
+        if(this.running){
+            this.time = this.time + delta; 
+            if(this.mode == "basic"){
+                if( this.time > this.switchT){
+                    this.switch();
+                }
+            } else if(this.mode == "greedy"){
+                if( this.time >= this.min_time){
+                    let found = this.check_greedy();
+                    if( found != -1){
+                        this.switch_specific(found);
+                    }
+                }
+            }
         }
     }
 
@@ -271,7 +383,7 @@ class Intersection{
 
     draw_color(light, graphics){
         if( light){
-            if(this.time + 40 > this.switchT) {
+            if(this.time + 10 > this.switchT) {
                 graphics.beginFill(this.yellow);
             } else {
                 graphics.beginFill(this.green);
