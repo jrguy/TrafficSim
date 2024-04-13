@@ -7,6 +7,7 @@
     <!-- <script src="road.js"></script> -->
     <script src="curveRoads.js"></script>
     <script src="inter.js"></script>
+    <script src="writer.js"></script>
   </head>
   <body>
     <script>
@@ -20,6 +21,7 @@
         const ROAD_SIZE = 20;
         const CAR_SIZE = 8;
         const app = new PIXI.Application({ background: '#87CEFA', width: WIDTH, height: HEIGHT });
+        const writer = new Writer("sample.txt");
 
         document.body.appendChild(app.view);
 
@@ -93,8 +95,11 @@
             }
         }
 
+        let r_num = 0;
         roads.forEach(road => {
             road.draw(graphics);
+            road.update_name("r"+r_num);
+            r_num++;
         })
 
         inters.forEach(inter => {
@@ -214,6 +219,22 @@
             return ran; 
         }
       
+        window.onload = (event) => {
+            $('#endB').click(function() {
+                roads.forEach(road => {
+                    let val = road.car_report();
+                    writer.write_to_road_log(val);
+                    console.log(val);
+                });
+            });
+        }
     </script>
+        <div id="controls">
+            <button type="button" id="endB">End </button>
+
+      
+
+      
+          </div>
   </body>
 </html>

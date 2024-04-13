@@ -16,6 +16,7 @@ class Road{
     reset_a = [];
     change_a = [];
     road_points = [];
+    car_passed = 0;
 
     constructor( r_point, hor, num_lanes, draw_size){
         this.start_x = r_point[0].x; 
@@ -92,6 +93,7 @@ class Road{
         if( reset ){
             this.set_pos( car );
         }
+        this.car_passed++;
     }
 
     remove_car( car ){
@@ -104,6 +106,10 @@ class Road{
     print_car_array(car){
         let i = this.cars.indexOf(car);
         return i;
+    }
+
+    update_name(given_name){
+        this.name = given_name; 
     }
 
     accept_car_lane(car, start_p){
@@ -536,6 +542,10 @@ class Road{
             }
 
         }
+    }
+
+    car_report(){
+        return [this.name, this.car_passed];
     }
 
     status(){
