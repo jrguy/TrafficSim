@@ -13,8 +13,9 @@ class Intersection{
     roads = [];
     time = 0;
     //switchT = Math.floor(Math.random() * (200 - 180)) + (180); 
-    switchT = 50;
-    min_time = 50;
+    switchT = 80;
+    min_time = 80;
+    total_cycle = this.switchT * 2;
     need_draw = false;
     offest = 0;
     road_lanes_x = 2; 
@@ -22,6 +23,8 @@ class Intersection{
     has_lights = true;
     mode = "basic";
     zones;
+    road_rates;
+    current_road;
 
     constructor(given_x, given_y, offset){
         this.x = given_x - 4; 
@@ -57,13 +60,51 @@ class Intersection{
 
     update_mode(given){
         this.mode = given;
-        if(this.mode == "greedy"){
+        if(this.mode == "greedy" || this.mode == "rate"){
             this.turn_all(false);
         }
         if(this.mode == "basic"){
             this.lanes = [false, false, true, true];
         }
     }
+
+    get_road_rates(given){
+        let my_roads = {};
+        let total = 0;
+        let names = [];
+        this.roads.forEach(r => {
+            names.push(r.name);
+            my_roads[r.name] = given[r.name];
+            total = total + given[r.name];
+
+        });
+        for(var key in my_roads) {
+            my_roads[key]  = my_roads[key] / total;
+        }
+        this.road_rates = [];
+
+        for(var key in my_roads) {
+            console.log(my_roads[key]);
+            this.road_rates.push(Math.round(my_roads[key] * this.total_cycle));
+        }
+
+        let opt_road = 0;
+        if(this.road_rates[0] < this.road_rates[1]){
+            opt_road = 1;
+        } 
+        this.current_road = opt_road;
+
+        if(this.roads[opt_road].horizontal){
+            this.switch_specific(0);
+        } else {
+            this.switch_specific(2);
+        }
+
+        console.log(this.road_rates);
+
+    }
+
+
 
     check_bounds(i){
         return this.bounds[i];
@@ -138,8 +179,8 @@ class Intersection{
             });
         });
 
-        console.log(" stopped " + cars_stopped);
-        console.log("zones " + zones);
+        // console.log(" stopped " + cars_stopped);
+        // console.log("zones " + zones);
         this.zones = zones; 
     }
 
@@ -251,7 +292,6 @@ class Intersection{
         return new road_point(this.x, this.y);
     }
 
-
     get_section_in_inter(lane){
         for (let i = 0; i < lane.lane_points.length - 1; i++) {
             let p1 = lane.lane_points[i];
@@ -332,6 +372,14 @@ class Intersection{
         this.need_draw = true; 
     }
 
+    switch_current_road(){
+        if( this.current_road == 0 ){
+            this.current_road = 1;
+        } else {
+            this.current_road = 0;
+        }
+    }
+
     check_greedy(){
         let found = -1;
         for (let i = 0; i < this.zones.length; i++) {
@@ -357,9 +405,15 @@ class Intersection{
                         this.switch_specific(found);
                     }
                 }
+            } else if(this.mode == "rate"){
+                if( this.time >= this.road_rates[this.current_road]){
+                    this.switch_current_road();
+                    this.switch();
+                }
             }
         }
     }
+
 
     draw( graphics ){
         this.draw_color(this.lanes[0], graphics);

@@ -17,13 +17,16 @@
         const HOR_ROAD = 1; 
         const VER_ROAD = 1;
         const CARS = 1;
-        const MAX_CARS = 10;
+        const MAX_CARS = 12;
+        const TOTAL_CARS = 100;
         const ROAD_SIZE = 20;
         const CAR_SIZE = 8;
         const app = new PIXI.Application({ background: '#87CEFA', width: WIDTH, height: HEIGHT });
         const writer = new Writer("sample.txt");
 
         document.body.appendChild(app.view);
+
+        let road_average = writer.read_average();
 
         const graphics = new PIXI.Graphics();
 
@@ -106,9 +109,10 @@
             // console.log(inter);
             //inter.update_running(false);
             inter.draw_background(graphics);
-            inter.update_mode("greedy");
         })
-        inters[0].update_mode("basic");
+        inters[0].update_mode("rate");
+        inters[0].get_road_rates(road_average);
+        inters[1].update_mode("greedy");
 
         app.stage.addChild(graphics);
 
@@ -151,9 +155,9 @@
 
             if( running){
                 thing.clear();
-                console.log("    NEW ITER");
+                // console.log("    NEW ITER");
                 inters.forEach(inter => {
-                    console.log(" new inter ");
+                    // console.log(" new inter ");
                     inter.update_time(delta);
                     inter.draw( thing );
                     inter.check_lanes_for_cars(50);
@@ -163,7 +167,7 @@
                 road.draw_cars( thing, running );
             });
 
-            if( current_car < MAX_CARS && car_pause > pause_car){
+            if( current_car < MAX_CARS && car_pause > pause_car && current_car < TOTAL_CARS){
                 makeCar();
                 current_car++;
                 car_pause = 0;
@@ -223,7 +227,7 @@
             $('#endB').click(function() {
                 roads.forEach(road => {
                     let val = road.car_report();
-                    writer.write_to_road_log(val);
+                    // writer.write_to_road_log(val);
                     console.log(val);
                 });
             });

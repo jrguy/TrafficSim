@@ -45,7 +45,12 @@ class Road{
 
         let slope_x = r_point[r_point.length-1].x - r_point[0].x;
         let slope_y = r_point[r_point.length-1].y - r_point[0].y;
-        // console.log(" slope " + this.x + " y " + this.y);
+        //console.log(" slope " + slope_x + " y " + slope_y);
+        if( slope_x > slope_y){
+            this.horizontal = true; 
+        } else {
+            this.horizontal = false; 
+        }
         let m = ( slope_y / slope_x);
         let per_m = -1/m;
         // console.log(" actuale slope " + m);
