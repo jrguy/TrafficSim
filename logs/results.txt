@@ -1,0 +1,200 @@
+trips finished  8
+average time 690.75
+ variace h 728 l 636
+
+trips finished  9
+average time 625.3333333333334
+variace h 659 l 602
+
+trips finished  12
+ average time 440.25
+variace h 932 l 0
+
+trips finished  7
+ average time 698
+variace h 728 l 636
+
+trips finished  9
+average time 615.7777777777778
+variace h 642 l 602
+
+trips finished  7
+average time 698.2857142857143
+variace h 728 l 636
+
+trips finished  7
+average time 711
+variace h 741 l 636
+
+trips finished  18
+average time 289.3333333333333
+variace h 827 l 0
+
+trips finished  20
+average time 249.85
+variace h 763 l 0
+
+trips finished  7
+average time 698.8571428571429
+variace h 742 l 636
+
+trips finished  8
+average time 638.875
+variace h 655 l 636
+
+trips finished  24
+average time 206
+variace h 478 l 0
+
+
+
+NEXT RUN
+
+
+trips finished  10
+average time 454.4
+variace h 807 l 376
+
+trips finished  7
+ average time 628
+variace h 658 l 602
+
+trips finished  9
+average time 434
+variace h 753 l 0
+
+trips finished  18
+average time 243.88
+variace h 635 l 0
+
+trips finished  24
+average time 176.375
+variace h 463 l 0
+
+trips finished  7
+average time 592.42
+variace h 609 l 585
+
+trips finished  6
+average time 657
+variace h 687 l 636
+
+trips finished  22
+average time 188
+variace h 468 l 0
+
+trips finished  14
+average time 294
+variace h 758 l 0
+
+trips finished  18
+average time 216.166
+variace h 550 l 0
+
+trips finished  11
+average time 342.81
+variace h 639 l 0
+
+trips finished  8
+average time 466
+variace h 583 l 380
+
+NEXT RUN
+
+trips finished  12
+average time 381
+variace h 670 l 0
+
+trips finished  8
+average time 585
+variace h 585 l 585
+
+trips finished  10
+average time 442.2
+variace h 447 l 418
+
+trips finished  7
+average time 672.42
+variace h 703 l 636
+
+trips finished  20
+average time 220.3
+variace h 520 l 0
+
+trips finished  7
+average time 672.28
+variace h 702 l 636
+
+trips finished  20
+average time 218.55
+variace h 506 l 0
+
+trips finished  7
+average time 589.57
+variace h 594 l 585
+
+trips finished  6
+average time 657.83
+variace h 700 l 636
+
+trips finished  6
+average time 690.66
+variace h 727 l 636
+
+trips finished  16
+average time 278.5
+variace h 594 l 0
+
+trips finished  24
+average time 176.25
+variace h 417 l 0
+
+NEW RUN 
+
+trips finished  6
+average time 676.66
+variace h 705 l 652
+
+trips finished  14
+average time 311.5
+variace h 647 l 0
+
+trips finished  20
+average time 207.4
+variace h 472 l 0
+
+trips finished  11
+average time 349.81
+variace h 612 l 0
+
+trips finished  18
+average time 229.27
+variace h 578 l 0
+
+trips finished  6
+average time 661.33
+variace h 670 l 636
+
+trips finished  26
+average time 153.076
+variace h 339 l 0
+
+trips finished  11
+average time 353.63
+variace h 683 l 0
+
+trips finished  9
+average time 437.22
+variace h 448 l 376
+
+trips finished  14
+average time 266.85
+variace h 604 l 0
+
+trips finished  20
+average time 201.7
+variace h 484 l 0
+
+trips finished  6
+average time 619.3333333333334
+variace h 663 l 602

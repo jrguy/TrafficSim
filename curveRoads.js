@@ -7,6 +7,7 @@ class Road{
     horizontal = true;
     x_offset = 0;
     y_offset = 0; 
+    car_manager; 
     cars = [];
     intersections = [];
     lanes = [];
@@ -115,6 +116,10 @@ class Road{
 
     update_name(given_name){
         this.name = given_name; 
+    }
+
+    get_car_manager(given_manager){
+        this.car_manager = given_manager;
     }
 
     accept_car_lane(car, start_p){
@@ -517,26 +522,34 @@ class Road{
             }
 
             if(this.reset_a.length > 0){
-                
-                for (let i = 0; i < this.reset_a.length; i++) {
-                    //console.log(this.reset_a[i]);
-                    if( this.cars[this.reset_a[i][0]].present_lane != this.cars[this.reset_a[i][0]].startLane){
-                        //remove and put car back in starting lane
-                        this.cars[this.reset_a[i][0]].present_lane.remove_car(this.cars[this.reset_a[i][0]]);
-
-                        this.cars[this.reset_a[i][0]].startLane.add_car( this.cars[this.reset_a[i][0]] );
-                        this.cars[this.reset_a[i][0]].startLane.update_car_pos( this.cars[this.reset_a[i][0]] );
-                        this.cars[this.reset_a[i][0]].get_lane( this.cars[this.reset_a[i][0]].startLane );
-
-                        this.cars[this.reset_a[i][0]].startRoad.accept_car( this.cars[this.reset_a[i][0]], true );
-                        this.cars[this.reset_a[i][0]].at_end();
-
-                        car_r.push(this.cars[this.reset_a[i][0]]);
-                    } else {
-                        this.set_pos(this.cars[this.reset_a[i][0]]);
+                this.car_manager.update_completed(this.reset_a.length);
+                if(this.car_manager.should_reset()){
+                    for (let i = 0; i < this.reset_a.length; i++) {
+                        //console.log(this.reset_a[i]);
+                        if( this.cars[this.reset_a[i][0]].present_lane != this.cars[this.reset_a[i][0]].startLane){
+                            //remove and put car back in starting lane
+                            this.cars[this.reset_a[i][0]].present_lane.remove_car(this.cars[this.reset_a[i][0]]);
+    
+                            this.cars[this.reset_a[i][0]].startLane.add_car( this.cars[this.reset_a[i][0]] );
+                            this.cars[this.reset_a[i][0]].startLane.update_car_pos( this.cars[this.reset_a[i][0]] );
+                            this.cars[this.reset_a[i][0]].get_lane( this.cars[this.reset_a[i][0]].startLane );
+    
+                            this.cars[this.reset_a[i][0]].startRoad.accept_car( this.cars[this.reset_a[i][0]], true );
+                            this.cars[this.reset_a[i][0]].at_end();
+    
+                            car_r.push(this.cars[this.reset_a[i][0]]);
+                        } else {
+                            this.set_pos(this.cars[this.reset_a[i][0]]);
+                        }
                     }
+                    this.reset_a.length = 0;
+                } else {
+                    //put cars in a safe spot to stop repeating end 
+                    for (let i = 0; i < this.reset_a.length; i++) {
+                        this.cars[this.reset_a[i][0]].present_lane.remove_car(this.cars[this.reset_a[i][0]]);
+                    }
+                    this.reset_a.length = 0;
                 }
-                this.reset_a.length = 0;
             }
 
             if(car_r.length){

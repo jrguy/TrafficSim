@@ -84,12 +84,21 @@ class Car{
     }
 
     report(){
-        console.log(this.trips_fin);
+        console.log("trips finished  " + this.trips_fin);
         var total = 0; 
+        let high = 0; 
+        let low = 10000000;
         this.trip_time.forEach(time => {
             total = total + time;
+            if(time > high){
+                high = time;
+            }
+            if( time < low){
+                low = time;
+            }
         });
-        console.log("average time " + total);
+        console.log("average time " + (total/this.trips_fin));
+        console.log("variace h " + high + " l " + low);
     }
 
     color( given_color){
@@ -271,15 +280,44 @@ class Car{
 
 class CarManager{
     carCompleted = 0; 
+    conncurrent_cars = 0;
     carGoal = 10; 
+    on_screen_cars = 1;
+    make_pause = 40;
+    wait = 0;
 
-    constructor( given_Goal){
+
+    constructor( given_Goal, con_cars){
         this.carGoal = given_Goal;
+        this.conncurrent_cars = con_cars;
     } 
 
     update_completed(x){
+
         this.carCompleted = this.carCompleted + x;
+        console.log( "cars comp " + this.carCompleted );
     }
+
+    make_more(){
+        if( this.on_screen_cars < this.conncurrent_cars && this.wait > this.make_pause && current_car < this.carGoal){
+            console.log(this.on_screen_cars );
+            this.on_screen_cars++;
+            this.wait = 0;
+            return true; 
+        } else {
+            this.wait++;
+            return false; 
+        }
+    }
+
+    should_reset(){
+        if(this.carCompleted < this.carGoal){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
     
 }

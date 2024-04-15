@@ -23,6 +23,7 @@
         const CAR_SIZE = 8;
         const app = new PIXI.Application({ background: '#87CEFA', width: WIDTH, height: HEIGHT });
         const writer = new Writer("sample.txt");
+        const car_manager = new CarManager(TOTAL_CARS, MAX_CARS);
 
         document.body.appendChild(app.view);
 
@@ -102,6 +103,7 @@
         roads.forEach(road => {
             road.draw(graphics);
             road.update_name("r"+r_num);
+            road.get_car_manager(car_manager);
             r_num++;
         })
 
@@ -112,7 +114,12 @@
         })
         inters[0].update_mode("rate");
         inters[0].get_road_rates(road_average);
-        inters[1].update_mode("greedy");
+        inters[1].update_mode("rate");
+        inters[1].get_road_rates(road_average);
+        // inters[0].update_mode("greedy");
+        // inters[1].update_mode("greedy");
+        // inters[0].update_mode("basic");
+        // inters[1].update_mode("basic");
 
         app.stage.addChild(graphics);
 
@@ -140,12 +147,12 @@
         app.stage.addEventListener('click', (e) =>
         {
             running = !running; 
-            // cars.forEach(car => {
-            //     car.report();
-            // });
-            // roads.forEach(road => {
-            //     road.status();
-            // });
+            cars.forEach(car => {
+                car.report();
+            });
+            roads.forEach(road => {
+                road.status();
+            });
         });
 
         let elapsed = 0.0;
@@ -162,18 +169,25 @@
                     inter.draw( thing );
                     inter.check_lanes_for_cars(50);
                 });
+
+                if(car_manager.make_more()){
+                    makeCar();
+                }
             }
             roads.forEach(road => {
                 road.draw_cars( thing, running );
             });
 
-            if( current_car < MAX_CARS && car_pause > pause_car && current_car < TOTAL_CARS){
-                makeCar();
-                current_car++;
-                car_pause = 0;
-            } else {
-                car_pause++;
-            }
+
+
+            //running = car_manager.should_reset();
+            // if( current_car < MAX_CARS && car_pause > pause_car && current_car < TOTAL_CARS){
+            //     makeCar();
+            //     current_car++;
+            //     car_pause = 0;
+            // } else {
+            //     car_pause++;
+            // }
 
         });
 
