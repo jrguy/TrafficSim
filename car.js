@@ -101,6 +101,22 @@ class Car{
         console.log("variace h " + high + " l " + low);
     }
 
+    report_array(){
+        var total = 0; 
+        let high = 0; 
+        let low = 10000000;
+        this.trip_time.forEach(time => {
+            total = total + time;
+            if(time > high){
+                high = time;
+            }
+            if( time < low){
+                low = time;
+            }
+        });
+        return [ this.trips_fin, (total/this.trips_fin), high, low];
+    }
+
     color( given_color){
         this.color = given_color;
     }
@@ -282,15 +298,18 @@ class CarManager{
     carCompleted = 0; 
     conncurrent_cars = 0;
     carGoal = 10; 
-    on_screen_cars = 1;
+    on_screen_cars = 0;
     make_pause = 40;
     wait = 0;
 
 
-    constructor( given_Goal, con_cars){
+    constructor(){
+    } 
+
+    update(given_Goal, con_cars){
         this.carGoal = given_Goal;
         this.conncurrent_cars = con_cars;
-    } 
+    }
 
     update_completed(x){
 
@@ -298,9 +317,23 @@ class CarManager{
         console.log( "cars comp " + this.carCompleted );
     }
 
+    remove_completed(x){
+        this.on_screen_cars = this.on_screen_cars - x; 
+        console.log(" on screen cars " + this.on_screen_cars);
+    }
+
+    completed_all_cars(){
+        if( this.on_screen_cars <= 0 && this.carCompleted >= this.carGoal ){
+            return true;
+        } else {
+            return false; 
+        }
+    }
+
     make_more(){
-        if( this.on_screen_cars < this.conncurrent_cars && this.wait > this.make_pause && current_car < this.carGoal){
-            console.log(this.on_screen_cars );
+        if( this.on_screen_cars < this.conncurrent_cars && this.wait > this.make_pause 
+            && this.carCompleted < this.carGoal){
+            console.log( " making new on screen " +  this.on_screen_cars );
             this.on_screen_cars++;
             this.wait = 0;
             return true; 
@@ -311,6 +344,7 @@ class CarManager{
     }
 
     should_reset(){
+        console.log(this.carCompleted + " < " + this.carGoal);
         if(this.carCompleted < this.carGoal){
             return true;
         } else {
@@ -318,6 +352,72 @@ class CarManager{
         }
     }
 
+    reseting(){
+        this.carCompleted = 0; 
+
+    }
+
 
     
+}
+
+let startPs = [];
+
+function makeCar( cars, roads ){
+    let car = new Car( 20, 20, CAR_SIZE );
+    cars.push(car);
+
+    let ran = checkStartP( startPs, roads );
+    //let ran = Math.floor(Math.random() * startPs.length);
+    for (let l = 0; l < roads.length; l++) {
+        if(roads[l].has_start_p(startPs[ran])){
+            roads[l].accept_car_lane(car, startPs[ran]);
+
+            let end_i = 0;
+            if( l < roads.length - 1 ){
+                end_i = l + 1;
+            } 
+
+            let endPs = roads[end_i].get_end_p();
+
+            endPs.push(roads[l].get_given_end(startPs[ran]));
+
+            let ran_2 = Math.floor(Math.random() * endPs.length);
+            car.set_end(endPs[ran_2].x, endPs[ran_2].y );
+        }
+        
+    }
+}
+
+function checkStartP( startPs, roads ){
+    let found = false;
+    let ran = Math.floor(Math.random() * startPs.length);
+    // while(!found){
+    //     for (let l = 0; l < roads.length; l++) {
+    //         if(roads[l].has_start_p(startPs[ran])){
+    //             if(!roads[l].check_lane_start(startPs[ran])){
+    //                 found = true;
+    //             } 
+    //         }
+    //     }
+    //     if( ran < startPs.length - 1){
+    //         ran++;
+    //     } else {
+    //         ran = 0;
+    //     }
+    // }
+    ran = 1;
+    return ran; 
+}
+
+function makeCars(roads, cars){
+    for (let i = 0; i < roads.length; i++) {
+        startPs = startPs.concat( roads[i].get_start_p());
+    }
+    
+    makeCar( startPs,  cars, roads);
+
+    roads.forEach(road => {
+        road.check_cars_end();
+    });
 }

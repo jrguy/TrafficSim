@@ -198,3 +198,28 @@ variace h 484 l 0
 trips finished  6
 average time 619.3333333333334
 variace h 663 l 602
+
+
+    max cars 10 
+basic_0
+total trips 38 average 112.167
+greedy_1
+total trips 31 average 162.34
+rate_2
+total trips 35 average 134.63
+
+    max cars 15 
+basic_3
+total trips 36 average 195.42
+greedy_4
+total trips 37 average 180.45
+rate_5
+total trips 33 average 284.91
+
+    max cars 20
+basic_6
+total trips 36 average 291.54
+greedy_7
+total trips 37 average 248.45
+rate_8
+total trips 38 average 270.42

@@ -1,0 +1,172 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/pixi.js@7.x/dist/pixi.min.js"></script>
+    <script src="car.js"></script>
+    <!-- <script src="road.js"></script> -->
+    <script src="curveRoads.js"></script>
+    <script src="inter.js"></script>
+    <script src="writer.js"></script>
+    <script src="interationManager.js"></script>
+  </head>
+  <body>
+    <script>
+        // Create the application helper and add its render target to the page
+        const WIDTH = 640; 
+        const HEIGHT = 380;
+        const app = new PIXI.Application({ background: '#87CEFA', width: WIDTH, height: HEIGHT });
+        const writer = new Writer("sample.txt");
+        const ROAD_SIZE = 20;
+        const CAR_SIZE = 8;
+
+        document.body.appendChild(app.view);
+        let road_average = writer.read_average();
+        const graphics = new PIXI.Graphics();
+        const thing = new PIXI.Graphics();
+        let car_manager = new CarManager();
+        let iteration_manager = new IterationManager();
+        let report_manager = new ReportManager();
+        let running = true;
+        let cars = [];
+        let roads = []; 
+
+
+        let HOR_ROAD = 1; 
+        let VER_ROAD = 1;
+        let CARS = 0;
+        let MAX_CARS = iteration_manager.get_cars();
+        let TOTAL_CARS = 30;
+        car_manager.update(TOTAL_CARS, MAX_CARS);
+    
+        let roadPs = [];
+        let current_car = 1; 
+        let pause_car = 40;
+        let car_pause = 0;
+
+        roads = make_roads( HEIGHT, WIDTH, HOR_ROAD, VER_ROAD   );
+
+        let inters = MakeIntersections(roads);
+
+        //console.log(inters);
+
+        start_roads(roads, graphics);
+
+        StartIntersections(graphics, inters); 
+
+        // inters[0].update_mode("rate");
+        // inters[0].get_road_rates(road_average);
+        // inters[1].update_mode("rate");
+        // inters[1].get_road_rates(road_average);
+        // inters[0].update_mode("greedy");
+        // inters[1].update_mode("greedy");
+        inters[0].update_mode(iteration_manager.get_intersection());
+        inters[1].update_mode(iteration_manager.get_intersection());
+
+
+        makeCars(roads, cars);
+
+        startApp();
+
+        let elapsed = 0.0;
+        app.ticker.add((delta) =>
+        {
+            elapsed += delta;
+
+            if( running){
+                thing.clear();
+                inters.forEach(inter => {
+                    inter.update_time(delta);
+                    inter.draw( thing );
+                    inter.check_lanes_for_cars(50);
+                });
+
+                if(car_manager.make_more()){
+                    makeCar(cars, roads);
+                }
+            }
+            roads.forEach(road => {
+                road.draw_cars( thing, running );
+            });
+            if(car_manager.completed_all_cars()){
+                console.log(" ending ");
+                clearApp();
+                iteration_manager.move_iter();
+                running = false;
+                car_manager.reseting();
+                restart();
+            }
+        });
+
+
+        window.onload = (event) => {
+            $('#endB').click(function() {
+                roads.forEach(road => {
+                    let val = road.car_report();
+                    // writer.write_to_road_log(val);
+                    console.log(val);
+                });
+            });
+        }
+
+        function startApp(){
+
+            app.stage.addChild(graphics);
+
+            app.stage.addChild(thing);
+            thing.x = 0;
+            thing.y = 0;
+
+            app.stage.eventMode = 'static';
+            app.stage.hitArea = app.screen;
+            app.stage.addEventListener('click', (e) =>
+            {
+                running = !running; 
+                cars.forEach(car => {
+                    car.report();
+                });
+                roads.forEach(road => {
+                    road.status();
+                });
+                report_manager.print_report()
+            });
+        }
+
+        function clearApp(){
+            report_manager.get_iter_val(iteration_manager.get_mode_val());
+            //get_report(mode, car)
+            cars.forEach(car => {
+                report_manager.get_report(iteration_manager.get_intersection() + "_" +
+                iteration_manager.iteration_counter, car);
+            });
+            cars = [];
+            cars.length = 0;
+            // roads = [];
+            // roads.length = 0;
+            // inters = [];
+            // inters.length = 0;
+        }
+
+        function restart(){
+            MAX_CARS = iteration_manager.get_cars();
+            car_manager.update(TOTAL_CARS, MAX_CARS);
+
+            // inters = MakeIntersections(roads);
+            // StartIntersections(graphics, inters); 
+
+            inters.forEach(inter => {
+                inter.update_mode(iteration_manager.get_intersection());
+                if(iteration_manager.get_intersection() == "rate"){
+                    inter.get_road_rates(road_average);
+                }
+            })
+
+            running = true;
+        }
+    </script>
+        <div id="controls">
+            <button type="button" id="endB">End </button>
+      
+          </div>
+  </body>
+</html>

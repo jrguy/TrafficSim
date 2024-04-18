@@ -545,6 +545,7 @@ class Road{
                     this.reset_a.length = 0;
                 } else {
                     //put cars in a safe spot to stop repeating end 
+                    this.car_manager.remove_completed(this.reset_a.length);
                     for (let i = 0; i < this.reset_a.length; i++) {
                         this.cars[this.reset_a[i][0]].present_lane.remove_car(this.cars[this.reset_a[i][0]]);
                     }
@@ -871,4 +872,47 @@ class road_point{
         this.x = given_x; 
         this.y = given_y; 
     }
+}
+
+function make_roads( HEIGHT, WIDTH, HOR_ROAD, VER_ROAD   ){
+    let hor_r = HEIGHT/(HOR_ROAD + 2);
+    let ver_r = WIDTH/(VER_ROAD + 2);
+    let offset = 0; 
+    let roads = [];
+
+    for (let i = 0; i < ((HOR_ROAD + VER_ROAD)*2); i = i + 2) {
+        if( i <= HOR_ROAD){
+            let ran = Math.floor(Math.random() * ((HEIGHT/HOR_ROAD) - 50)) + (50 * i);
+            ran = hor_r * (i + 1);
+            let points = [];
+            points[0] = new road_point(0, ran);
+            points[1] = new road_point(WIDTH, ran );
+            roads.push( new Road(points, true, 1, ROAD_SIZE));
+        } else {
+            let ran = Math.floor(Math.random() * ((WIDTH/VER_ROAD) - 50)) + (50 * i); 
+            ran = ver_r + (offset * ver_r);
+            let points = [];
+            points[0] = new road_point(ran, 0);
+            points[1] = new road_point(ran , HEIGHT);
+            roads.push( new Road(points, false, 1, ROAD_SIZE));
+            offset++;
+        } 
+    }
+
+    let points = [];
+    points[0] = new road_point(0, 200);
+    points[1] = new road_point(WIDTH, 250 );
+    roads.push( new Road(points, false, 1, ROAD_SIZE));
+
+    return roads;
+}
+
+function start_roads(roads, graphics){
+    let r_num = 0;
+    roads.forEach(road => {
+        road.draw(graphics);
+        road.update_name("r"+r_num);
+        road.get_car_manager(car_manager);
+        r_num++;
+    })
 }

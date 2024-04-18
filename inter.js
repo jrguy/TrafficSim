@@ -567,3 +567,45 @@ function CheckIfWithin(v1, v2, c){
     }
 }
 
+function MakeIntersections(roads){
+    let inters = [];
+    for (let i = 0; i < roads.length; i++) {
+        // console.log(" new road!!!! " + i);
+        for (let l = i + 1; l < roads.length; l++) {
+            // console.log( " new compare road! " + l);
+            let val = FindIntersection( roads[i], roads[l]);
+            if( val[0] != 10 && val[1] != 10){
+                if( Array.isArray(val[0])){
+                    for (let m = 0; m < val.length; m++) {
+                        let temp = new Intersection(val[m][0], val[m][1], Math.floor(ROAD_SIZE/2))
+                        // console.log(" temp founds ");
+                        // console.log( val );
+                        inters.push(temp);
+                        roads[i].accept_inter(temp);
+                        roads[l].accept_inter(temp);
+                        temp.accept_road( roads[i] );
+                        temp.accept_road( roads[l] );
+                    }
+                } else {
+                    let temp = new Intersection(val[0], val[1], Math.floor(ROAD_SIZE/2))
+                    // console.log(" temp founds ");
+                    // console.log( val );
+                    inters.push(temp);
+                    roads[i].accept_inter(temp);
+                    roads[l].accept_inter(temp);
+                    temp.accept_road( roads[i] );
+                    temp.accept_road( roads[l] );
+                }
+            }
+        }
+    }
+    return inters; 
+}
+
+function StartIntersections(graphics, inters){
+    inters.forEach(inter => {
+        // console.log(inter);
+        //inter.update_running(false);
+        inter.draw_background(graphics);
+    })
+}
