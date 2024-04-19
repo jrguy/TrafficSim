@@ -36,7 +36,7 @@
         let VER_ROAD = 1;
         let CARS = 0;
         let MAX_CARS = iteration_manager.get_cars();
-        let TOTAL_CARS = 30;
+        let TOTAL_CARS = iteration_manager.get_total_cars();
         car_manager.update(TOTAL_CARS, MAX_CARS);
     
         let roadPs = [];
@@ -91,10 +91,13 @@
             if(car_manager.completed_all_cars()){
                 console.log(" ending ");
                 clearApp();
-                iteration_manager.move_iter();
                 running = false;
-                car_manager.reseting();
-                restart();
+
+                if(!iteration_manager.is_complete()){
+                    iteration_manager.move_iter();
+                    car_manager.reseting();
+                    restart();
+                }
             }
         });
 
@@ -149,6 +152,7 @@
 
         function restart(){
             MAX_CARS = iteration_manager.get_cars();
+            TOTAL_CARS = iteration_manager.get_total_cars()
             car_manager.update(TOTAL_CARS, MAX_CARS);
 
             // inters = MakeIntersections(roads);

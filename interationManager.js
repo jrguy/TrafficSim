@@ -1,14 +1,16 @@
 class IterationManager{
     running = true; 
     iteration_counter = 0;
+    total_cars = [30, 45, 60];
     max_cars = [10, 15, 20, 25];
     intersection_types = ["basic", "greedy", "rate"];
 
-    cars_i = 0;
-    inter_i = 1;
+    total_i = 0;
+    cars_i = 1;
+    inter_i = 2;
 
-    cycle_counter = [0, 0];
-    cycle_max = [this.max_cars.length - 1, this.intersection_types.length - 1];
+    cycle_counter = [0, 0, 0];
+    cycle_max = [this.total_cars.length - 1, this.max_cars.length - 1, this.intersection_types.length - 1];
 
 
     constructor(){
@@ -30,6 +32,10 @@ class IterationManager{
         this.iteration_counter++;
     }
 
+    get_total_cars(){
+        return this.total_cars[this.cycle_counter[this.total_i]];
+    }
+
     get_cars(){
         return this.max_cars[this.cycle_counter[this.cars_i]];
     }
@@ -40,8 +46,27 @@ class IterationManager{
     }
 
     get_mode_val(){
-        return " max cars " + this.max_cars[this.cycle_counter[this.cars_i]] + 
+        return " total cars " + this.total_cars[this.cycle_counter[this.total_i]] +
+        " max cars " + this.max_cars[this.cycle_counter[this.cars_i]] + 
         " interation type " + this.intersection_types[this.cycle_counter[this.inter_i]];
+    }
+
+    is_complete(){
+        let val = true; 
+
+        if( this.total_cars.length - 1 > this.cycle_counter[this.total_i]){
+            val = false; 
+        }
+
+        if(this.max_cars.length - 1 > this.cycle_counter[this.cars_i]){
+            val = false; 
+        }
+
+        if(this.intersection_types.length - 1 > this.cycle_counter[this.inter_i] ){
+            val = false;  
+        }
+
+        return val;
     }
 
 }

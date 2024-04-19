@@ -223,3 +223,69 @@ greedy_7
 total trips 37 average 248.45
 rate_8
 total trips 38 average 270.42
+
+
+ total cars 30 max cars 10 interation 
+basic_0
+total trips 40 average 106.854
+greedy_1
+total trips 35 average 123.87
+rate_2
+total trips 38 average 121.68
+
+total cars 30 max cars 15 interatio
+basic_3
+total trips 40 average 161.10
+greedy_4
+total trips 38 average 177.7
+rate_5
+total trips 35 average 218.18
+
+total cars 30 max cars 20
+basic_6
+total trips 41 average 223.50
+greedy_7
+total trips 38 average 256.35
+rate_8
+total trips 42 average 215.56
+
+total cars 30 max cars 25 interation 
+ basic_9
+ total trips 40 average NaN
+ greedy_10
+total trips 41 average NaN
+rate_11
+total trips 42 average NaN
+
+
+total cars 45 max cars 10 interation 
+basic_12
+total trips 54 average 88.48
+greedy_13
+total trips 52 average 88.29
+rate_14
+ total trips 54 average 89.05
+
+total cars 45 max cars 15 interation type basic
+basic_15
+total trips 57 average 133.95
+greedy_16
+total trips 56 average 127.06
+rate_17
+total trips 62 average 110.02
+
+total cars 45 max cars 20 interation type basic
+basic_18
+total trips 56 average 183.58
+greedy_19
+total trips 49 average 235.64
+rate_20
+total trips 60 average 172.69555555555553
+
+total cars 45 max cars 25 interation type basic
+basic_21
+total trips 61 average 199.01
+greedy_22
+total trips 61 average 191.29
+rate_23
+total trips 60 average 210.96222222222224

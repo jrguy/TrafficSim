@@ -367,6 +367,9 @@ function makeCar( cars, roads ){
     let car = new Car( 20, 20, CAR_SIZE );
     cars.push(car);
 
+    console.log(" start in make car ps " );
+    console.log(startPs);
+
     let ran = checkStartP( startPs, roads );
     //let ran = Math.floor(Math.random() * startPs.length);
     for (let l = 0; l < roads.length; l++) {
@@ -392,21 +395,25 @@ function makeCar( cars, roads ){
 function checkStartP( startPs, roads ){
     let found = false;
     let ran = Math.floor(Math.random() * startPs.length);
-    // while(!found){
-    //     for (let l = 0; l < roads.length; l++) {
-    //         if(roads[l].has_start_p(startPs[ran])){
-    //             if(!roads[l].check_lane_start(startPs[ran])){
-    //                 found = true;
-    //             } 
-    //         }
-    //     }
-    //     if( ran < startPs.length - 1){
-    //         ran++;
-    //     } else {
-    //         ran = 0;
-    //     }
-    // }
-    ran = 1;
+    console.log(" ran " + ran);
+    console.log(" start ps " );
+    console.log(startPs);
+    while(!found){
+        console.log("ran " + ran);
+        for (let l = 0; l < roads.length; l++) {
+            if(roads[l].has_start_p(startPs[ran])){
+                if(!roads[l].check_lane_start(startPs[ran])){
+                    found = true;
+                } 
+            }
+        }
+        if( ran < startPs.length - 1){
+            ran++;
+        } else {
+            ran = 0;
+        }
+    }
+    //ran = 1;
     return ran; 
 }
 
@@ -414,8 +421,10 @@ function makeCars(roads, cars){
     for (let i = 0; i < roads.length; i++) {
         startPs = startPs.concat( roads[i].get_start_p());
     }
+    console.log(" make cars start p");
+    console.log(startPs);
     
-    makeCar( startPs,  cars, roads);
+    makeCar( cars, roads);
 
     roads.forEach(road => {
         road.check_cars_end();
