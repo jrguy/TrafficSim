@@ -23,8 +23,11 @@ class Intersection{
     has_lights = true;
     mode = "basic";
     zones;
+    current_road_rates;
+    road_rates_key;
     road_rates;
     current_road;
+    sense_dist = 0;
 
     constructor(given_x, given_y, offset){
         this.x = given_x - 4; 
@@ -68,6 +71,52 @@ class Intersection{
         }
     }
 
+    get_update_rates(){
+        let total = 0;
+        let my_roads = {};
+        let names = [];
+        this.roads.forEach(r => {
+            let rep = r.car_report();
+            console.log(rep);
+            total = total + rep[1];
+            my_roads[rep[0]] = rep[1];
+            names.push(rep[0]);
+        });
+        // console.log(my_roads);
+
+        names.forEach(name => {
+            my_roads[name]  = my_roads[name] / total;
+        });
+
+        let adjust = [];
+        for (let i = 0; i < this.road_rates_key.length; i++) {
+            // console.log(" old rate " + this.current_road_rates[i]);
+            // console.log(" new rate " + my_roads[this.road_rates_key[i]]);
+            let v1 = this.current_road_rates[i] * 5;
+            let v2 = my_roads[this.road_rates_key[i]] * 2;
+            // console.log(" final rate " + (v1 + v2)/7)
+            adjust.push((v1 + v2)/7);
+        }
+        // console.log(adjust);
+
+        // let t = 0;
+        let i = 0;
+        adjust.forEach(val => {
+            // console.log(" new val " + val);
+
+            // console.log(this.total_cycle);
+            this.road_rates[i] = Math.round(val * this.total_cycle);
+            this.current_road_rates.push(val);
+
+            i++;
+            // t = t + val;
+        });
+        // console.log(" total " + t);
+        
+        // console.log(" live rates ");
+        // console.log(this.road_rates);
+    }
+
     get_road_rates(given){
         let my_roads = {};
         let total = 0;
@@ -81,11 +130,17 @@ class Intersection{
         for(var key in my_roads) {
             my_roads[key]  = my_roads[key] / total;
         }
+        this.current_road_rates = [];
         this.road_rates = [];
+        this.road_rates_key = [];
+
+        // console.log("my road rates");
+        // console.log(my_roads);
 
         for(var key in my_roads) {
-            console.log(my_roads[key]);
+            this.road_rates_key.push(key);
             this.road_rates.push(Math.round(my_roads[key] * this.total_cycle));
+            this.current_road_rates.push(my_roads[key]);
         }
 
         let opt_road = 0;
@@ -100,11 +155,9 @@ class Intersection{
             this.switch_specific(2);
         }
 
-        console.log(this.road_rates);
+        // console.log(this.road_rates);
 
     }
-
-
 
     check_bounds(i){
         return this.bounds[i];
@@ -150,38 +203,42 @@ class Intersection{
     }
 
     check_lanes_for_cars(dist){
-        let cars_stopped = 0;
-        let zones = [0, 0, 0, 0];
-        this.roads.forEach(road => {
-            road.lanes.forEach(lane => {
-                lane.cars.forEach(car => {
-                    if(car.stopped){
-                        cars_stopped += 1;
-                    }
-
-                    if( this.bounds[0] - dist <= car.x && car.x <= this.bounds[0] ){
-                        zones[0] += 1;
-                    }
-
-                    if( this.bounds[1] + dist >= car.x && car.x >= this.bounds[1] ){
-                        zones[1] += 1;
-                    }
-
-                    if( this.bounds[2] - dist <= car.y && car.y <= this.bounds[2] ){
-                        zones[2] += 1;
-                    }
-
-                    if( this.bounds[3] + dist >= car.y && car.y >= this.bounds[3] ){
-                        zones[3] += 1;
-                    }
-
+        dist =  Number(dist);
+        if( dist > 0 ){
+            this.sense_dist = dist;
+            let cars_stopped = 0;
+            let zones = [0, 0, 0, 0];
+            this.roads.forEach(road => {
+                road.lanes.forEach(lane => {
+                    lane.cars.forEach(car => {
+                        if(car.stopped){
+                            cars_stopped += 1;
+                        }
+                        if( this.bounds[0] - dist <= car.x && car.x <= this.bounds[0] ){
+                            zones[0] += 1;
+                        }
+    
+                        if( this.bounds[1] + dist >= car.x && car.x >= this.bounds[1] ){
+                            zones[1] += 1;
+                        }
+    
+                        if( this.bounds[2] - dist <= car.y && car.y <= this.bounds[2] ){
+                            zones[2] += 1;
+                        }
+    
+                        if( this.bounds[3] + dist >= car.y && car.y >= this.bounds[3] ){
+                            zones[3] += 1;
+                        }
+    
+                    });
                 });
             });
-        });
-
-        // console.log(" stopped " + cars_stopped);
-        // console.log("zones " + zones);
-        this.zones = zones; 
+    
+            // console.log(this.name);
+            // console.log(" stopped " + cars_stopped);
+            // console.log("zones " + zones);
+            this.zones = zones;  
+        }
     }
 
     check_ends(end_point, car, x, y){
@@ -433,6 +490,11 @@ class Intersection{
                      (Math.floor(this.offest)), (Math.floor(this.offest)));
         graphics.endFill();
         this.need_draw = false; 
+        if(this.sense_dist > 0){
+            // graphics.lineStyle(2, "#FFED0B"); 
+            // graphics.drawCircle(this.x, this.y, this.sense_dist);
+            // graphics.lineStyle(0); 
+        }
     }
 
     draw_color(light, graphics){

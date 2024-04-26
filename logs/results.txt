@@ -280,7 +280,7 @@ total trips 56 average 183.58
 greedy_19
 total trips 49 average 235.64
 rate_20
-total trips 60 average 172.69555555555553
+total trips 60 average 172.69
 
 total cars 45 max cars 25 interation type basic
 basic_21
@@ -288,4 +288,394 @@ total trips 61 average 199.01
 greedy_22
 total trips 61 average 191.29
 rate_23
-total trips 60 average 210.96222222222224
+total trips 60 average 210.96
+
+
+
+total cars 30 max cars 10 interation type basic scan dist  0
+basic_0
+total trips 24 average 225.90
+
+total cars 30 max cars 10 interation type greedy scan dist  50
+greedy_1
+total trips 23 average 245.63
+
+total cars 30 max cars 10 interation type greedy scan dist  100
+greedy_2
+total trips 23 average 245.53
+
+total cars 30 max cars 10 interation type rate scan dist  0
+rate_3
+total trips 26 average 153.72
+
+total cars 30 max cars 15 interation type basic scan dist  0
+basic_4
+total trips 25 average 307.82
+
+total cars 30 max cars 15 interation type greedy scan dist  50
+greedy_5
+total trips 24 average 353.18
+
+total cars 30 max cars 15 interation type greedy scan dist  100
+greedy_6
+total trips 24 average 355.13
+
+total cars 30 max cars 15 interation type rate scan dist  0
+rate_7
+total trips 23 average 321.34
+
+total cars 30 max cars 20 interation type basic scan dist  0
+basic_8
+total trips 25 average NaN
+
+total cars 30 max cars 20 interation type greedy scan dist  50
+greedy_9
+total trips 25 average 435.52
+
+total cars 30 max cars 20 interation type greedy scan dist  100
+greedy_10
+total trips 25 average NaN
+
+total cars 30 max cars 20 interation type rate scan dist  0
+rate_11
+total trips 23 average NaN
+
+total cars 30 max cars 25 interation type basic scan dist  0
+basic_12
+total trips 24 average NaN
+
+total cars 30 max cars 25 interation type greedy scan dist  50
+greedy_13
+total trips 25 average NaN
+
+total cars 30 max cars 25 interation type greedy scan dist  100
+greedy_14
+total trips 25 average NaN
+
+total cars 30 max cars 25 interation type rate scan dist  0
+rate_15
+total trips 23 average NaN
+
+total cars 45 max cars 10 interation type basic scan dist  0
+basic_16
+total trips 34 average 133.60
+
+total cars 45 max cars 10 interation type greedy scan dist  50
+greedy_17
+total trips 36 average 132.36
+
+total cars 45 max cars 10 interation type greedy scan dist  100
+greedy_18
+total trips 36 average 150.77
+
+total cars 45 max cars 10 interation type rate scan dist  0
+rate_19
+total trips 34 average 150.27
+
+total cars 45 max cars 15 interation type basic scan dist  0
+basic_20
+total trips 35 average 251.81
+
+total cars 45 max cars 15 interation type greedy scan dist  50
+greedy_21
+total trips 38 average 218.76
+
+total cars 45 max cars 15 interation type greedy scan dist  100
+greedy_22
+total trips 38 average 271.06
+
+total cars 45 max cars 15 interation type rate scan dist  0
+rate_23
+total trips 37 average 227.70
+
+total cars 45 max cars 20 interation type basic scan dist  0
+basic_24
+total trips 39 average 261.16
+
+total cars 45 max cars 20 interation type greedy scan dist  50
+greedy_25
+total trips 37 average 362.52
+
+total cars 45 max cars 20 interation type greedy scan dist  100
+greedy_26
+total trips 38 average NaN
+
+total cars 45 max cars 20 interation type rate scan dist  0
+rate_27
+total trips 38 average 312.32
+
+total cars 45 max cars 25 interation type basic scan dist  0
+basic_28
+total trips 37 average NaN
+
+total cars 45 max cars 25 interation type greedy scan dist  50
+greedy_29
+total trips 38 average NaN
+
+total cars 45 max cars 25 interation type greedy scan dist  100
+greedy_30
+total trips 38 average NaN
+
+total cars 45 max cars 25 interation type rate scan dist  0
+rate_31
+total trips 39 average NaN
+
+total cars 60 max cars 10 interation type basic scan dist  0
+basic_32
+total trips 47 average 112.29
+
+total cars 60 max cars 10 interation type greedy scan dist  50
+greedy_33
+total trips 46 average 121.75
+
+total cars 60 max cars 10 interation type greedy scan dist  100
+greedy_34
+total trips 47 average 115.96
+
+total cars 60 max cars 10 interation type rate scan dist  0
+rate_35
+total trips 45 average 118.56
+
+total cars 60 max cars 15 interation type basic scan dist  0
+basic_36
+total trips 50 average 153.39
+
+total cars 60 max cars 15 interation type greedy scan dist  50
+greedy_37
+total trips 50 average 166.40
+
+total cars 60 max cars 15 interation type greedy scan dist  100
+greedy_38
+total trips 50 average 193.58
+
+total cars 60 max cars 15 interation type rate scan dist  0
+rate_39
+total trips 48 average 186.25
+
+total cars 60 max cars 20 interation type basic scan dist  0
+basic_40
+total trips 51 average 230.61
+
+total cars 60 max cars 20 interation type greedy scan dist  50
+greedy_41
+total trips 51 average 219.83
+
+total cars 60 max cars 20 interation type greedy scan dist  100
+greedy_42
+total trips 51 average 225.65
+
+total cars 60 max cars 20 interation type rate scan dist  0
+rate_43
+total trips 53 average 206.28
+
+total cars 60 max cars 25 interation type basic scan dist  0
+basic_44
+total trips 52 average 253.00
+
+total cars 60 max cars 25 interation type greedy scan dist  50
+greedy_45
+total trips 52 average 250.81
+
+total cars 60 max cars 25 interation type greedy scan dist  100
+greedy_46
+total trips 52 average NaN
+
+total cars 60 max cars 25 interation type rate scan dist  0
+rate_47
+total trips 51 average 277.69
+
+
+ total cars 30 max cars 10 interation type basic scan dist  0
+ basic_0
+ total trips 38 average 151.87
+
+ total cars 30 max cars 10 interation type greedy scan dist  50
+ greedy_1
+ total trips 31 average 169.44
+
+ total cars 30 max cars 10 interation type greedy scan dist  100
+ greedy_2
+ total trips 30 average 178.24
+
+ total cars 30 max cars 10 interation type rate scan dist  0
+ rate_3
+ total trips 31 average 173.67
+
+ total cars 30 max cars 15 interation type basic scan dist  0
+ basic_4
+ total trips 37 average 216.63
+
+ total cars 30 max cars 15 interation type greedy scan dist  50
+ greedy_5
+ total trips 38 average 203.91
+
+ total cars 30 max cars 15 interation type greedy scan dist  100
+ greedy_6
+ total trips 38 average 228.31
+
+ total cars 30 max cars 15 interation type rate scan dist  0
+ rate_7
+ total trips 38 average 192.92
+
+ total cars 30 max cars 20 interation type basic scan dist  0
+ basic_8
+ total trips 44 average 259.71
+
+ total cars 30 max cars 20 interation type greedy scan dist  50
+ greedy_9
+ total trips 43 average 261.10
+
+ total cars 30 max cars 20 interation type greedy scan dist  100
+ greedy_10
+ total trips 43 average 370.49
+
+ total cars 30 max cars 20 interation type rate scan dist  0
+ rate_11
+ total trips 41 average 247.73
+
+ total cars 30 max cars 25 interation type basic scan dist  0
+ basic_12
+ total trips 49 average 282.81
+
+ total cars 30 max cars 25 interation type greedy scan dist  50
+ greedy_13
+ total trips 48 average 291.46
+
+ total cars 30 max cars 25 interation type greedy scan dist  100
+ greedy_14
+ total trips 48 average 365.34
+
+ total cars 30 max cars 25 interation type rate scan dist  0
+ rate_15
+ total trips 49 average 284.64
+
+ total cars 45 max cars 10 interation type basic scan dist  0
+ basic_16
+ total trips 43 average 111.92
+
+ total cars 45 max cars 10 interation type greedy scan dist  50
+ greedy_17
+ total trips 43 average 130.59
+
+ total cars 45 max cars 10 interation type greedy scan dist  100
+ greedy_18
+ total trips 42 average 136.16
+
+ total cars 45 max cars 10 interation type rate scan dist  0
+ rate_19
+ total trips 47 average 109.36
+
+ total cars 45 max cars 15 interation type basic scan dist  0
+ basic_20
+ total trips 51 average 149.26
+
+ total cars 45 max cars 15 interation type greedy scan dist  50
+ greedy_21
+ total trips 53 average 145.91
+
+ total cars 45 max cars 15 interation type greedy scan dist  100
+ greedy_22
+ total trips 53 average 180.73
+
+ total cars 45 max cars 15 interation type rate scan dist  0
+ rate_23
+ total trips 51 average 159.12
+
+ total cars 45 max cars 20 interation type basic scan dist  0
+ basic_24
+ total trips 58 average 164.69
+
+ total cars 45 max cars 20 interation type greedy scan dist  50
+ greedy_25
+ total trips 58 average 183.60
+
+ total cars 45 max cars 20 interation type greedy scan dist  100
+ greedy_26
+ total trips 56 average 234.97
+
+ total cars 45 max cars 20 interation type rate scan dist  0
+ rate_27
+ total trips 56 average 186.77
+
+ total cars 45 max cars 25 interation type basic scan dist  0
+ basic_28
+ total trips 61 average 226.61
+
+ total cars 45 max cars 25 interation type greedy scan dist  50
+ greedy_29
+ total trips 62 average 244.63
+
+ total cars 45 max cars 25 interation type greedy scan dist  100
+ greedy_30
+ total trips 61 average 334.26
+
+ total cars 45 max cars 25 interation type rate scan dist  0
+ rate_31
+ total trips 61 average 229.71
+
+ total cars 60 max cars 10 interation type basic scan dist  0
+ basic_32
+ total trips 55 average 96.10
+
+ total cars 60 max cars 10 interation type greedy scan dist  50
+ greedy_33
+ total trips 57 average 81.34
+
+ total cars 60 max cars 10 interation type greedy scan dist  100
+ greedy_34
+ total trips 55 average 111.30
+
+ total cars 60 max cars 10 interation type rate scan dist  0
+ rate_35
+ total trips 65 average 98.28
+
+ total cars 60 max cars 15 interation type basic scan dist  0
+ basic_36
+ total trips 68 average 105.50
+
+ total cars 60 max cars 15 interation type greedy scan dist  50
+ greedy_37
+ total trips 65 average 141.55
+
+ total cars 60 max cars 15 interation type greedy scan dist  100
+ greedy_38
+ total trips 67 average 131.69
+
+ total cars 60 max cars 15 interation type rate scan dist  0
+ rate_39
+ total trips 67 average 107.87
+
+ total cars 60 max cars 20 interation type basic scan dist  0
+ basic_40
+ total trips 71 average 151.74
+
+ total cars 60 max cars 20 interation type greedy scan dist  50
+ greedy_41
+ total trips 73 average 146.26
+
+ total cars 60 max cars 20 interation type greedy scan dist  100
+ greedy_42
+ total trips 72 average 259.50
+
+ total cars 60 max cars 20 interation type rate scan dist  0
+ rate_43
+ total trips 71 average 156.80
+
+ total cars 60 max cars 25 interation type basic scan dist  0
+ basic_44
+ total trips 76 average 179.84
+
+ total cars 60 max cars 25 interation type greedy scan dist  50
+ greedy_45
+ total trips 77 average 207.48
+
+ total cars 60 max cars 25 interation type greedy scan dist  100
+ greedy_46
+ total trips 75 average 353.42
+
+ total cars 60 max cars 25 interation type rate scan dist  0
+ rate_47
+total trips 77 average 182.96
+
+
+

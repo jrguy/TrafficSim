@@ -78,7 +78,8 @@
                 inters.forEach(inter => {
                     inter.update_time(delta);
                     inter.draw( thing );
-                    inter.check_lanes_for_cars(50);
+                    //inter.check_lanes_for_cars(50);
+                    inter.check_lanes_for_cars(iteration_manager.get_scan());
                 });
 
                 if(car_manager.make_more()){
@@ -131,23 +132,18 @@
                 roads.forEach(road => {
                     road.status();
                 });
-                report_manager.print_report()
+                report_manager.print_report();
             });
         }
 
         function clearApp(){
             report_manager.get_iter_val(iteration_manager.get_mode_val());
-            //get_report(mode, car)
             cars.forEach(car => {
                 report_manager.get_report(iteration_manager.get_intersection() + "_" +
                 iteration_manager.iteration_counter, car);
             });
             cars = [];
             cars.length = 0;
-            // roads = [];
-            // roads.length = 0;
-            // inters = [];
-            // inters.length = 0;
         }
 
         function restart(){
@@ -155,13 +151,11 @@
             TOTAL_CARS = iteration_manager.get_total_cars()
             car_manager.update(TOTAL_CARS, MAX_CARS);
 
-            // inters = MakeIntersections(roads);
-            // StartIntersections(graphics, inters); 
-
             inters.forEach(inter => {
                 inter.update_mode(iteration_manager.get_intersection());
                 if(iteration_manager.get_intersection() == "rate"){
                     inter.get_road_rates(road_average);
+                    inter.get_update_rates();
                 }
             })
 

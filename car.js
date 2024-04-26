@@ -43,8 +43,10 @@ class Car{
     }
 
     at_end(){
-        this.trips_fin = this.trips_fin + 1;
-        this.trip_time.push(this.time);
+        if(this.time > 0){
+            this.trips_fin = this.trips_fin + 1;
+            this.trip_time.push(this.time);
+        }
         this.time = 0; 
     }
 
@@ -114,7 +116,13 @@ class Car{
                 low = time;
             }
         });
-        return [ this.trips_fin, (total/this.trips_fin), high, low];
+        // console.log(" trips fin " + this.trips_fin);
+        // console.log(" total " + total);
+        let average = (total/this.trips_fin);
+        if( total == 0 && this.trips_fin == 0){
+            average = 0;
+        }
+        return [ this.trips_fin, average, high, low];
     }
 
     color( given_color){
@@ -314,12 +322,12 @@ class CarManager{
     update_completed(x){
 
         this.carCompleted = this.carCompleted + x;
-        console.log( "cars comp " + this.carCompleted );
+        //console.log( "cars comp " + this.carCompleted );
     }
 
     remove_completed(x){
         this.on_screen_cars = this.on_screen_cars - x; 
-        console.log(" on screen cars " + this.on_screen_cars);
+        //console.log(" on screen cars " + this.on_screen_cars);
     }
 
     completed_all_cars(){
@@ -333,7 +341,7 @@ class CarManager{
     make_more(){
         if( this.on_screen_cars < this.conncurrent_cars && this.wait > this.make_pause 
             && this.carCompleted < this.carGoal){
-            console.log( " making new on screen " +  this.on_screen_cars );
+            // console.log( " making new on screen " +  this.on_screen_cars );
             this.on_screen_cars++;
             this.wait = 0;
             return true; 
@@ -367,9 +375,6 @@ function makeCar( cars, roads ){
     let car = new Car( 20, 20, CAR_SIZE );
     cars.push(car);
 
-    console.log(" start in make car ps " );
-    console.log(startPs);
-
     let ran = checkStartP( startPs, roads );
     //let ran = Math.floor(Math.random() * startPs.length);
     for (let l = 0; l < roads.length; l++) {
@@ -395,11 +400,7 @@ function makeCar( cars, roads ){
 function checkStartP( startPs, roads ){
     let found = false;
     let ran = Math.floor(Math.random() * startPs.length);
-    console.log(" ran " + ran);
-    console.log(" start ps " );
-    console.log(startPs);
     while(!found){
-        console.log("ran " + ran);
         for (let l = 0; l < roads.length; l++) {
             if(roads[l].has_start_p(startPs[ran])){
                 if(!roads[l].check_lane_start(startPs[ran])){
@@ -413,7 +414,6 @@ function checkStartP( startPs, roads ){
             ran = 0;
         }
     }
-    //ran = 1;
     return ran; 
 }
 
@@ -421,8 +421,6 @@ function makeCars(roads, cars){
     for (let i = 0; i < roads.length; i++) {
         startPs = startPs.concat( roads[i].get_start_p());
     }
-    console.log(" make cars start p");
-    console.log(startPs);
     
     makeCar( cars, roads);
 

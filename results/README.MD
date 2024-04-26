@@ -1,0 +1,10 @@
+Results Generation: Each car keeps track of its overall number of trips and the amount of time each trip takes. I then average the group of times to find an overall average for the specific iteration. That allows me to compare values of trips and average times across the different types of intersection control modes. That data was compiled in the results folder with, Results Overview Sample Set 1. 
+
+Results Overview: No single mode beats the basic time on the test road configuration. Certain modes perform better at specific groupings of data. Greedy 50 matches the performance of basic but is in some cases 5% worse pretty consistently with different configurations. Greedy 100 performs much worse across the board against every other configuration. This is specific to this test configuration and these results are only in relation to that configuration. 
+
+Next steps: More modes and hybrid modes could be possible to beat a basic intersection mode. An intersection that switches modes based on the current flow of traffic would probably be the optimal solution. 
+
+Ideally this tool would allow users to test real life intersections with different configurations against real traffic totals. This is a good step in that direction but it needs additional steps to get to that final goal. 
+
+Assumptions: 
+Currently the solution is optimized best for single lane roads. We don’t have such features as turning lanes or real life features of turning right on red which allows for more efficient traffic flow. The switching of traffic lights also doesn’t take into account the time to cross the intersection which presents visual effects of cars overlapping within the intersection. Cars overlap and don’t leave enough space between other cars which can also affect average times. Some cars perform U-turns at intersections which is okay for certain scenarios but not all real world situations. Cars do not have adequate speed up and slow down features to match real life. The different ways people actually brake at stop lights are not captured. Instead we have one method for all cars. 

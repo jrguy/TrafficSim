@@ -3,7 +3,8 @@ class IterationManager{
     iteration_counter = 0;
     total_cars = [30, 45, 60];
     max_cars = [10, 15, 20, 25];
-    intersection_types = ["basic", "greedy", "rate"];
+    //max_cars = [ 20, 25];
+    intersection_types = ["basic_0", "greedy_50",  "greedy_100", "rate_0"];
 
     total_i = 0;
     cars_i = 1;
@@ -41,14 +42,20 @@ class IterationManager{
     }
 
     get_intersection(){
-        console.log(" interse type " + this.intersection_types[this.cycle_counter[this.inter_i]]);
-        return this.intersection_types[this.cycle_counter[this.inter_i]];
+        //console.log(" interse type " + this.intersection_types[this.cycle_counter[this.inter_i]].split("_")[0]);
+        //console.log("  amount " + this.intersection_types[this.cycle_counter[this.inter_i]].split("_")[1]);
+        return this.intersection_types[this.cycle_counter[this.inter_i]].split("_")[0];
+    }
+
+    get_scan(){
+        return this.intersection_types[this.cycle_counter[this.inter_i]].split("_")[1];
     }
 
     get_mode_val(){
         return " total cars " + this.total_cars[this.cycle_counter[this.total_i]] +
         " max cars " + this.max_cars[this.cycle_counter[this.cars_i]] + 
-        " interation type " + this.intersection_types[this.cycle_counter[this.inter_i]];
+        " interation type " + this.intersection_types[this.cycle_counter[this.inter_i]].split("_")[0] +
+        " scan dist  " + this.intersection_types[this.cycle_counter[this.inter_i]].split("_")[1];
     }
 
     is_complete(){
@@ -89,11 +96,14 @@ class ReportManager{
             this.report_mode.push(mode);
             this.report.push([]);
         } else {
-            this.report[index].push(car.report_array());
+            let carR = car.report_array();
+            if( carR[0] != 0 && carR[1] != 0) {
+                this.report[index].push(car.report_array());
+            }
         }
-        console.log(" report manager ");
-        console.log(this.report_mode);
-        console.log(this.report);
+        // console.log(" report manager ");
+        // console.log(this.report_mode);
+        // console.log(this.report);
     }
 
     print_report(){
@@ -106,6 +116,7 @@ class ReportManager{
             average = 0;
             this.report[i].forEach(report => {
                 total_t = total_t + report[0];
+                // console.log("  report[1] " + report[1]);
                 average = average + report[1];
             })
             console.log(" total trips " + total_t + " average " + (average/total_t));

@@ -522,10 +522,13 @@ class Road{
             }
 
             if(this.reset_a.length > 0){
-                this.car_manager.update_completed(this.reset_a.length);
+                //this.car_manager.update_completed(this.reset_a.length);
                 if(this.car_manager.should_reset()){
                     for (let i = 0; i < this.reset_a.length; i++) {
                         //console.log(this.reset_a[i]);
+                        if(this.cars[this.reset_a[i][0]].time > 0){
+                            this.car_manager.update_completed(1);
+                        }
                         if( this.cars[this.reset_a[i][0]].present_lane != this.cars[this.reset_a[i][0]].startLane){
                             //remove and put car back in starting lane
                             this.cars[this.reset_a[i][0]].present_lane.remove_car(this.cars[this.reset_a[i][0]]);
@@ -547,7 +550,11 @@ class Road{
                     //put cars in a safe spot to stop repeating end 
                     this.car_manager.remove_completed(this.reset_a.length);
                     for (let i = 0; i < this.reset_a.length; i++) {
+                        if(this.cars[this.reset_a[i][0]].time > 0){
+                            this.car_manager.update_completed(1);
+                        }
                         this.cars[this.reset_a[i][0]].present_lane.remove_car(this.cars[this.reset_a[i][0]]);
+                        this.cars[this.reset_a[i][0]].at_end();
                     }
                     this.reset_a.length = 0;
                 }
